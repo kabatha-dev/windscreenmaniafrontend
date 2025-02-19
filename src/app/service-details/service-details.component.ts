@@ -172,16 +172,13 @@ export class ServiceDetailsComponent implements OnInit {
   }
 
   isFormValid(): boolean {
-    // Check basic details
     if (!this.selectedMake || !this.selectedModel || !this.vehicleDetails.registrationNumber.trim()) {
       return false;
     }
 
-    // Check windscreen details if service is selected
-    if (this.hasWindscreenService) {
-      if (!this.selectedWindscreenType || !this.selectedCustomization) {
-        return false;
-      }
+    if (this.hasWindscreenService && (!this.selectedWindscreenType || !this.selectedCustomization)) {
+      return false;
+    }
 
       // Check insurance details if insurance is selected
       if (this.hasInsurance) {

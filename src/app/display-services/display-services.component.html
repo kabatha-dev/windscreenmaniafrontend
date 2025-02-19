@@ -4,11 +4,88 @@
   <form (ngSubmit)="selectServices()" class="space-y-4">
     <!-- Services List -->
     <div *ngFor="let service of services" class="flex items-center space-x-2">
-      <input type="checkbox" [(ngModel)]="service.selected" [name]="service.name" class="w-4 h-4"/>
+      <input 
+        type="checkbox" 
+        [(ngModel)]="service.selected" 
+        [name]="service.name" 
+        class="w-4 h-4"
+        (change)="updateWindscreenStatus()"
+      />
       <label class="text-sm">{{ service.name | titlecase }}</label>
-  
     </div>
 
+    <!-- Windscreen Details -->
+    <div *ngIf="hasWindscreenReplacement" class="mt-4 p-4 border border-gray-300 rounded">
+      <h3 class="text-lg font-semibold mb-2">Windscreen Details</h3>
+
+      <!-- Windscreen Type -->
+      <label class="block text-sm font-medium">Windscreen Type:</label>
+      <select 
+        [(ngModel)]="selectedWindscreenType" 
+        name="selectedWindscreenType" 
+        class="w-full p-2 border rounded"
+        (change)="onWindscreenTypeChange()"
+      >
+        <option value="" disabled selected>Select a type</option>
+        <option *ngFor="let type of windscreenTypes" [value]="type.id">
+          {{ type.name }}
+        </option>
+      </select>
+
+      <!-- Windscreen Customizations -->
+      <label class="block text-sm font-medium mt-2">Customizations:</label>
+      <select 
+        [(ngModel)]="selectedCustomization" 
+        name="selectedCustomization" 
+        class="w-full p-2 border rounded"
+        [disabled]="!windscreenCustomizations.length"
+      >
+        <option value="" disabled selected>Select a customization</option>
+        <option *ngFor="let customization of windscreenCustomizations" [value]="customization.id">
+          {{ customization.name }} <!-- ✅ Now correctly maps to customization_details -->
+        </option>
+      </select>
+    </div>
+
+    <!-- Insurance Details -->
+    <div *ngIf="hasWindscreenReplacement" class="mt-4 p-4 border border-gray-300 rounded">
+      <h3 class="text-lg font-semibold mb-2">Insurance Details</h3>
+
+      <!-- Insurance Provider -->
+      <label class="block text-sm font-medium">Insurance Provider:</label>
+      <select 
+        [(ngModel)]="selectedInsurance" 
+        name="selectedInsurance" 
+        class="w-full p-2 border rounded"
+      >
+        <option value="" disabled selected>Select a provider</option>
+        <option *ngFor="let provider of insuranceProviders" [value]="provider.name">
+          {{ provider.name }}
+        </option>
+      </select>
+
+      <!-- KRA PIN -->
+      <label class="block text-sm font-medium mt-2">KRA PIN:</label>
+      <input 
+        type="text" 
+        [(ngModel)]="userDetails.kraPin" 
+        name="kraPin" 
+        class="w-full p-2 border rounded" 
+        placeholder="Enter KRA PIN"
+      />
+
+      <!-- Phone Number -->
+      <label class="block text-sm font-medium mt-2">Phone Number:</label>
+      <input 
+        type="text" 
+        [(ngModel)]="userDetails.phone" 
+        name="phone" 
+        class="w-full p-2 border rounded" 
+        placeholder="Enter Phone Number"
+      />
+    </div>
+
+    <!-- Submit Button -->
     <button type="submit" class="w-full bg-green-500 text-white p-2 rounded hover:bg-green-600">
       Submit Services
     </button>

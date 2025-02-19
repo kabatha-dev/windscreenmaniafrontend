@@ -95,14 +95,14 @@ export class ServiceDetailsComponent implements OnInit {
     const navigation = this.router.getCurrentNavigation();
     if (navigation?.extras.state) {
       this.selectedServices = navigation.extras.state['selectedServices'];
-      this.hasWindscreenService = this.selectedServices.includes(57-62);
+      this.hasWindscreenService = this.selectedServices.includes(1);
     }
   }
 
   ngOnInit(): void {
     this.fetchVehicleMakes();
     if (this.hasWindscreenService) {
-      this.fetchWindscreenTypes();
+      // this.fetchWindscreenTypes();
     }
   }
 
@@ -135,72 +135,72 @@ export class ServiceDetailsComponent implements OnInit {
   
   
 
-  fetchWindscreenTypes(): void {
-    this.apiService.getWindscreenTypes().subscribe({
-      next: (types: WindscreenType[]) => {
-        console.log('Windscreen types:', types);
-        this.windscreenTypes = types;
-      },
-      error: (error: any) => console.error('Error fetching windscreen types:', error)
-    });
-  }
+  // fetchWindscreenTypes(): void {
+  //   this.apiService.getWindscreenTypes().subscribe({
+  //     next: (types: WindscreenType[]) => {
+  //       console.log('Windscreen types:', types);
+  //       this.windscreenTypes = types;
+  //     },
+  //     error: (error: any) => console.error('Error fetching windscreen types:', error)
+  //   });
+  // }
 
-  onWindscreenTypeChange(): void {
-    if (this.selectedWindscreenType) {
-      this.fetchWindscreenCustomizations();
-      this.calculateWindscreenCost();
-    } else {
-      this.windscreenCustomizations = [];
-      this.selectedCustomization = '';
-      this.totalWindscreenCost = 0;
-    }
-  }
+  // onWindscreenTypeChange(): void {
+  //   if (this.selectedWindscreenType) {
+  //     this.fetchWindscreenCustomizations();
+  //     this.calculateWindscreenCost();
+  //   } else {
+  //     this.windscreenCustomizations = [];
+  //     this.selectedCustomization = '';
+  //     this.totalWindscreenCost = 0;
+  //   }
+  // }
 
-  fetchWindscreenCustomizations(): void {
-    this.apiService.getWindscreenCustomizations(+this.selectedWindscreenType).subscribe({
-      next: (customizations: WindscreenCustomization[]) => {
-        this.windscreenCustomizations = customizations;
-      },
-      error: (error: any) => console.error('Error fetching windscreen customizations:', error)
-    });
-  }
+  // fetchWindscreenCustomizations(): void {
+  //   this.apiService.getWindscreenCustomizations(+this.selectedWindscreenType).subscribe({
+  //     next: (customizations: WindscreenCustomization[]) => {
+  //       this.windscreenCustomizations = customizations;
+  //     },
+  //     error: (error: any) => console.error('Error fetching windscreen customizations:', error)
+  //   });
+  // }
 
-  onCustomizationChange(): void {
-    this.calculateWindscreenCost();
-  }
+  // onCustomizationChange(): void {
+  //   this.calculateWindscreenCost();
+  // }
 
-  calculateWindscreenCost(): void {
-    const selectedType = this.windscreenTypes.find(
-      type => type.id === +this.selectedWindscreenType
-    );
-    const selectedCustom = this.windscreenCustomizations.find(
-      custom => custom.id === +this.selectedCustomization
-    );
+  // calculateWindscreenCost(): void {
+  //   const selectedType = this.windscreenTypes.find(
+  //     type => type.id === +this.selectedWindscreenType
+  //   );
+  //   const selectedCustom = this.windscreenCustomizations.find(
+  //     custom => custom.id === +this.selectedCustomization
+  //   );
 
-    this.totalWindscreenCost = (selectedType?.cost || 0) + (selectedCustom?.cost || 0);
-  }
+  //   this.totalWindscreenCost = (selectedType?.cost || 0) + (selectedCustom?.cost || 0);
+  // }
 
-  onInsuranceChange(): void {
-    if (this.hasInsurance) {
-      this.fetchInsuranceProviders();
-    } else {
-      this.selectedInsuranceProvider = '';
-      this.userDetails = {
-        fullName: '',
-        email: '',
-        kraPin: ''
-      };
-    }
-  }
+  // onInsuranceChange(): void {
+  //   if (this.hasInsurance) {
+  //     this.fetchInsuranceProviders();
+  //   } else {
+  //     this.selectedInsuranceProvider = '';
+  //     this.userDetails = {
+  //       fullName: '',
+  //       email: '',
+  //       kraPin: ''
+  //     };
+  //   }
+  // }
 
-  fetchInsuranceProviders(): void {
-    this.apiService.getInsuranceProviders().subscribe({
-      next: (providers: InsuranceProvider[]) => {
-        this.insuranceProviders = providers;
-      },
-      error: (error: any) => console.error('Error fetching insurance providers:', error)
-    });
-  }
+  // fetchInsuranceProviders(): void {
+  //   this.apiService.getInsuranceProviders().subscribe({
+  //     next: (providers: InsuranceProvider[]) => {
+  //       this.insuranceProviders = providers;
+  //     },
+  //     error: (error: any) => console.error('Error fetching insurance providers:', error)
+  //   });
+  // }
 
   submitDetails(): void {
     if (!this.isFormValid()) {

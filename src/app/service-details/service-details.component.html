@@ -16,7 +16,7 @@
         <select [(ngModel)]="selectedModel" name="model" class="border p-2 w-full">
           <option value="">Select Model</option>
           <option *ngFor="let model of vehicleModels" [value]="model.id">
-            {{ model.name }}
+            {{ model.model }}
           </option>
         </select>
       </div>

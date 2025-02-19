@@ -31,7 +31,7 @@ interface VehicleMake {
 interface VehicleModel {
   id: number;
   name: string;
-  model: string;  // Ensure this property exists
+  model: string;  
 }
 
 interface WindscreenType {
@@ -95,7 +95,7 @@ export class ServiceDetailsComponent implements OnInit {
     const navigation = this.router.getCurrentNavigation();
     if (navigation?.extras.state) {
       this.selectedServices = navigation.extras.state['selectedServices'];
-      this.hasWindscreenService = this.selectedServices.includes(1);
+      this.hasWindscreenService = this.selectedServices.includes(57-62);
     }
   }
 
@@ -119,11 +119,10 @@ export class ServiceDetailsComponent implements OnInit {
     if (this.selectedMake) {
       this.apiService.getVehicleModels(+this.selectedMake).subscribe({
         next: (models: any[]) => {
-          console.log('API Response:', models); // Log API response
           this.vehicleModels = models.map(model => ({
             id: model.id,
             name: model.name,
-            model: model.model ?? model.name // Ensure 'model' is assigned correctly
+            model: model.model ?? model.name 
           }));
         },
         error: (error: any) => console.error('Error fetching vehicle models:', error)
@@ -139,6 +138,7 @@ export class ServiceDetailsComponent implements OnInit {
   fetchWindscreenTypes(): void {
     this.apiService.getWindscreenTypes().subscribe({
       next: (types: WindscreenType[]) => {
+        console.log('Windscreen types:', types);
         this.windscreenTypes = types;
       },
       error: (error: any) => console.error('Error fetching windscreen types:', error)

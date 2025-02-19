@@ -11,12 +11,6 @@ interface VehicleDetails {
   registrationNumber: string;
 }
 
-interface WindscreenDetails {
-  type: string;
-  customization: string;
-  cost: number;
-}
-
 interface UserDetails {
   fullName: string;
   email: string;
@@ -31,24 +25,6 @@ interface VehicleMake {
 interface VehicleModel {
   id: number;
   name: string;
-  model: string;  
-}
-
-interface WindscreenType {
-  id: number;
-  name: string;
-  cost: number;
-}
-
-interface WindscreenCustomization {
-  id: number;
-  name: string;
-  cost: number;
-}
-
-interface InsuranceProvider {
-  id: number;
-  name: string;
 }
 
 @Component({
@@ -60,50 +36,17 @@ interface InsuranceProvider {
 export class ServiceDetailsComponent implements OnInit {
   vehicleMakes: VehicleMake[] = [];
   vehicleModels: VehicleModel[] = [];
-  windscreenTypes: WindscreenType[] = [];
-  windscreenCustomizations: WindscreenCustomization[] = [];
-  totalWindscreenCost: number = 0;
-  insuranceProviders: InsuranceProvider[] = [];
-  
   selectedMake: string = '';
   selectedModel: string = '';
-  selectedWindscreenType: string = '';
-  selectedCustomization: string = '';
-  selectedInsuranceProvider: string = '';
-  
-  hasWindscreenService: boolean = false;
-  hasInsurance: boolean = false;
   selectedServices: number[] = [];
-  
-  vehicleDetails: VehicleDetails = {
-    make: '',
-    model: '',
-    year: '',
-    registrationNumber: ''
-  };
+  vehicleDetails: VehicleDetails = { make: '', model: '', year: '', registrationNumber: '' };
+  userDetails: UserDetails = { fullName: '', email: '', kraPin: '' };
 
-  userDetails: UserDetails = {
-    fullName: '',
-    email: '',
-    kraPin: ''
-  };
-
-  constructor(
-    private apiService: ApiService,
-    private router: Router
-  ) {
-    const navigation = this.router.getCurrentNavigation();
-    if (navigation?.extras.state) {
-      this.selectedServices = navigation.extras.state['selectedServices'];
-      this.hasWindscreenService = this.selectedServices.includes(1);
-    }
-  }
+  constructor(private apiService: ApiService, private router: Router) {}
 
   ngOnInit(): void {
     this.fetchVehicleMakes();
-    if (this.hasWindscreenService) {
-      // this.fetchWindscreenTypes();
-    }
+    this.loadSelectedServices();
   }
 
   fetchVehicleMakes(): void {
@@ -119,11 +62,7 @@ export class ServiceDetailsComponent implements OnInit {
     if (this.selectedMake) {
       this.apiService.getVehicleModels(+this.selectedMake).subscribe({
         next: (models: any[]) => {
-          this.vehicleModels = models.map(model => ({
-            id: model.id,
-            name: model.name,
-            model: model.model ?? model.name 
-          }));
+          this.vehicleModels = models.map(model => ({ id: model.id, name: model.name }));
         },
         error: (error: any) => console.error('Error fetching vehicle models:', error)
       });
@@ -132,75 +71,15 @@ export class ServiceDetailsComponent implements OnInit {
       this.selectedModel = '';
     }
   }
-  
-  
 
-  // fetchWindscreenTypes(): void {
-  //   this.apiService.getWindscreenTypes().subscribe({
-  //     next: (types: WindscreenType[]) => {
-  //       console.log('Windscreen types:', types);
-  //       this.windscreenTypes = types;
-  //     },
-  //     error: (error: any) => console.error('Error fetching windscreen types:', error)
-  //   });
-  // }
-
-  // onWindscreenTypeChange(): void {
-  //   if (this.selectedWindscreenType) {
-  //     this.fetchWindscreenCustomizations();
-  //     this.calculateWindscreenCost();
-  //   } else {
-  //     this.windscreenCustomizations = [];
-  //     this.selectedCustomization = '';
-  //     this.totalWindscreenCost = 0;
-  //   }
-  // }
-
-  // fetchWindscreenCustomizations(): void {
-  //   this.apiService.getWindscreenCustomizations(+this.selectedWindscreenType).subscribe({
-  //     next: (customizations: WindscreenCustomization[]) => {
-  //       this.windscreenCustomizations = customizations;
-  //     },
-  //     error: (error: any) => console.error('Error fetching windscreen customizations:', error)
-  //   });
-  // }
-
-  // onCustomizationChange(): void {
-  //   this.calculateWindscreenCost();
-  // }
-
-  // calculateWindscreenCost(): void {
-  //   const selectedType = this.windscreenTypes.find(
-  //     type => type.id === +this.selectedWindscreenType
-  //   );
-  //   const selectedCustom = this.windscreenCustomizations.find(
-  //     custom => custom.id === +this.selectedCustomization
-  //   );
-
-  //   this.totalWindscreenCost = (selectedType?.cost || 0) + (selectedCustom?.cost || 0);
-  // }
-
-  // onInsuranceChange(): void {
-  //   if (this.hasInsurance) {
-  //     this.fetchInsuranceProviders();
-  //   } else {
-  //     this.selectedInsuranceProvider = '';
-  //     this.userDetails = {
-  //       fullName: '',
-  //       email: '',
-  //       kraPin: ''
-  //     };
-  //   }
-  // }
-
-  // fetchInsuranceProviders(): void {
-  //   this.apiService.getInsuranceProviders().subscribe({
-  //     next: (providers: InsuranceProvider[]) => {
-  //       this.insuranceProviders = providers;
-  //     },
-  //     error: (error: any) => console.error('Error fetching insurance providers:', error)
-  //   });
-  // }
+  loadSelectedServices(): void {
+    const savedData = localStorage.getItem('selectedServicesData');
+    if (savedData) {
+      const parsedData = JSON.parse(savedData);
+      this.selectedServices = parsedData.selectedServices;
+      this.userDetails = parsedData.userDetails;
+    }
+  }
 
   submitDetails(): void {
     if (!this.isFormValid()) {
@@ -213,17 +92,14 @@ export class ServiceDetailsComponent implements OnInit {
         model: this.selectedModel,
         registrationNumber: this.vehicleDetails.registrationNumber
       },
-      windscreen: this.hasWindscreenService ? {
-        type: this.selectedWindscreenType,
-        customization: this.selectedCustomization,
-        totalCost: this.totalWindscreenCost,
-        hasInsurance: this.hasInsurance,
-        insuranceProvider: this.hasInsurance ? this.selectedInsuranceProvider : null
-      } : null,
-      userDetails: this.hasInsurance ? this.userDetails : null,
+      userDetails: this.userDetails,
       selectedServices: this.selectedServices
     };
 
+    // Save quote data in localStorage before sending
+    localStorage.setItem('quoteData', JSON.stringify(quoteData));
+
+    // Send only necessary data to backend (excluding windscreen details)
     this.apiService.generateQuote(quoteData.vehicle.registrationNumber, this.selectedServices)
       .subscribe({
         next: (response) => {
@@ -239,26 +115,6 @@ export class ServiceDetailsComponent implements OnInit {
   }
 
   isFormValid(): boolean {
-    // Check basic details
-    if (!this.selectedMake || !this.selectedModel || !this.vehicleDetails.registrationNumber.trim()) {
-      return false;
-    }
-
-    // Check windscreen details if service is selected
-    if (this.hasWindscreenService) {
-      if (!this.selectedWindscreenType || !this.selectedCustomization) {
-        return false;
-      }
-
-      // Check insurance details if insurance is selected
-      if (this.hasInsurance) {
-        return !!(this.selectedInsuranceProvider &&
-                 this.userDetails.fullName.trim() &&
-                 this.userDetails.email.trim() &&
-                 this.userDetails.kraPin.trim());
-      }
-    }
-
-    return true;
+    return !!(this.selectedMake && this.selectedModel && this.vehicleDetails.registrationNumber.trim());
   }
 }

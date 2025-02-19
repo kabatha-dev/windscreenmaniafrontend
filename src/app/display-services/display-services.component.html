@@ -1,0 +1,16 @@
+<div class="container mx-auto max-w-lg p-6 bg-white shadow-lg rounded-lg">
+  <h2 class="text-2xl font-bold mb-4 text-center">Select Services</h2>
+
+  <form (ngSubmit)="selectServices()" class="space-y-4">
+    <!-- Services List -->
+    <div *ngFor="let service of services" class="flex items-center space-x-2">
+      <input type="checkbox" [(ngModel)]="service.selected" [name]="service.name" class="w-4 h-4"/>
+      <label class="text-sm">{{ service.name | titlecase }}</label>
+  
+    </div>
+
+    <button type="submit" class="w-full bg-green-500 text-white p-2 rounded hover:bg-green-600">
+      Submit Services
+    </button>
+  </form>
+</div>

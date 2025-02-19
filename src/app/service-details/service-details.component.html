@@ -1,0 +1,76 @@
+<div class="container mx-auto p-6 bg-white shadow-lg rounded-lg">
+    <h2 class="text-2xl font-bold mb-4">Vehicle & Service Details</h2>
+  
+    <form (ngSubmit)="submitDetails()">
+      <!-- Vehicle Details -->
+      <div class="mb-4">
+        <label class="block font-semibold">Vehicle Make</label>
+        <select [(ngModel)]="selectedMake" name="make" (change)="onMakeChange()" class="border p-2 w-full">
+          <option value="">Select Make</option>
+          <option *ngFor="let make of vehicleMakes" [value]="make.id">{{ make.name }}</option>
+        </select>
+      </div>
+  
+      <div class="mb-4">
+        <label class="block font-semibold">Vehicle Model</label>
+        <select [(ngModel)]="selectedModel" name="model" class="border p-2 w-full">
+          <option value="">Select Model</option>
+          <option *ngFor="let model of vehicleModels" [value]="model.id">{{ model.name }}</option>
+        </select>
+      </div>
+  
+      <div class="mb-4">
+        <label class="block font-semibold">Registration Number</label>
+        <input type="text" [(ngModel)]="vehicleDetails.registrationNumber" name="registrationNumber" class="border p-2 w-full">
+      </div>
+  
+      <!-- Windscreen Service -->
+      <div *ngIf="hasWindscreenService" class="border p-4 bg-gray-100 rounded-lg">
+        <h3 class="font-semibold mb-2">Windscreen Service</h3>
+  
+        <label class="block">Windscreen Type</label>
+        <select [(ngModel)]="selectedWindscreenType" name="windscreenType" (change)="onWindscreenTypeChange()" class="border p-2 w-full">
+          <option value="">Select Type</option>
+          <option *ngFor="let type of windscreenTypes" [value]="type.id">{{ type.name }} (Ksh {{ type.cost }})</option>
+        </select>
+  
+        <label class="block mt-2">Customization</label>
+        <select [(ngModel)]="selectedCustomization" name="customization" (change)="onCustomizationChange()" class="border p-2 w-full">
+          <option value="">Select Customization</option>
+          <option *ngFor="let custom of windscreenCustomizations" [value]="custom.id">{{ custom.name }} (Ksh {{ custom.cost }})</option>
+        </select>
+  
+        <p class="mt-2 font-semibold">Total Windscreen Cost: Ksh {{ totalWindscreenCost }}</p>
+      </div>
+  
+      <!-- Insurance Details -->
+      <div class="mt-4">
+        <label class="block">
+          <input type="checkbox" [(ngModel)]="hasInsurance" name="hasInsurance" (change)="onInsuranceChange()"> Add Insurance
+        </label>
+  
+        <div *ngIf="hasInsurance" class="mt-2 border p-4 bg-gray-100 rounded-lg">
+          <h3 class="font-semibold mb-2">Insurance Details</h3>
+  
+          <label class="block">Provider</label>
+          <select [(ngModel)]="selectedInsuranceProvider" name="insuranceProvider" class="border p-2 w-full">
+            <option value="">Select Provider</option>
+            <option *ngFor="let provider of insuranceProviders" [value]="provider.id">{{ provider.name }}</option>
+          </select>
+  
+          <label class="block mt-2">Full Name</label>
+          <input type="text" [(ngModel)]="userDetails.fullName" name="fullName" class="border p-2 w-full">
+  
+          <label class="block mt-2">Email</label>
+          <input type="email" [(ngModel)]="userDetails.email" name="email" class="border p-2 w-full">
+  
+          <label class="block mt-2">KRA PIN</label>
+          <input type="text" [(ngModel)]="userDetails.kraPin" name="kraPin" class="border p-2 w-full">
+        </div>
+      </div>
+  
+      <!-- Submit Button -->
+      <button type="submit" class="mt-4 bg-blue-600 text-white py-2 px-4 rounded">Submit</button>
+    </form>
+  </div>
+  

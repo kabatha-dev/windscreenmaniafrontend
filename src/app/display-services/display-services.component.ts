@@ -142,6 +142,13 @@ export class DisplayServicesComponent implements OnInit {
       console.log('User Phone:', this.userDetails.phone);
     }
 
+    localStorage.setItem('selectedServices', JSON.stringify(this.selectedServices));
+    localStorage.setItem('selectedWindscreenType', JSON.stringify(this.selectedWindscreenType));
+    localStorage.setItem('selectedCustomization', JSON.stringify(this.selectedCustomization));
+    localStorage.setItem('selectedInsurance', JSON.stringify(this.selectedInsurance));
+    localStorage.setItem('userDetails', JSON.stringify(this.userDetails));
+    
+
     
 
     // Navigate with selected services

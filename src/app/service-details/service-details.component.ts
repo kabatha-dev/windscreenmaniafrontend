@@ -133,42 +133,60 @@ export class ServiceDetailsComponent implements OnInit {
     }
   }
   
-  
 
-  submitDetails(): void {
-    if (!this.isFormValid()) {
-      return;
-    }
 
-    const quoteData = {
-      vehicle: {
-        make: this.selectedMake,
-        model: this.selectedModel,
-        registrationNumber: this.vehicleDetails.registrationNumber
-      },
-      windscreen: this.hasWindscreenService ? {
-        type: this.selectedWindscreenType,
-        customization: this.selectedCustomization,
-        totalCost: this.totalWindscreenCost,
-        hasInsurance: this.hasInsurance,
-        insuranceProvider: this.hasInsurance ? this.selectedInsuranceProvider : null
-      } : null,
-      userDetails: this.hasInsurance ? this.userDetails : null,
-      selectedServices: this.selectedServices
+  submitDetails() {
+    const requestData = {
+      vehicle_make: this.selectedMake,
+      vehicle_model: this.selectedModel,
+      selected_services: this.selectedServices,
+      windscreen_type: this.selectedWindscreenType,
+      windscreen_customization: this.selectedCustomization,
+      insurance_provider: this.selectedInsuranceProvider,
+      user_details: this.userDetails,
     };
 
-    this.apiService.generateQuote(quoteData.vehicle.registrationNumber, this.selectedServices)
-      .subscribe({
-        next: (response) => {
-          this.router.navigate(['/quote-summary'], { 
-            state: { 
-              quote: response, 
-              details: quoteData 
-            }
-          });
-        },
-        error: (error) => console.error('Error generating quote:', error)
-      });
+    this.apiService.registerVehicle(requestData).subscribe({
+      next: (response) => {
+        console.log('Vehicle registered successfully:', response);
+
+        // Generate quote after registering the vehicle
+        this.apiService.generateQuote(response.vehicleId, this.selectedServices).subscribe({
+          next: (quoteResponse) => {
+            console.log('Generated Quote:', quoteResponse);
+            alert(`Quote Generated: ${quoteResponse.totalCost}`);
+
+            // Submit the service after quote approval
+            const serviceData = {
+              vehicle_id: response.vehicleId,
+              quote_number: quoteResponse.quoteNumber,
+              selected_services: this.selectedServices,
+              user_details: this.userDetails,
+            };
+
+            this.apiService.submitService(serviceData).subscribe({
+              next: (submitResponse) => {
+                console.log('Service submitted successfully:', submitResponse);
+                alert('Service request submitted successfully!');
+                this.router.navigate(['/confirmation']); // Redirect to confirmation page
+              },
+              error: (error) => {
+                console.error('Error submitting service:', error);
+                alert('Error submitting service request.');
+              },
+            });
+          },
+          error: (error) => {
+            console.error('Error generating quote:', error);
+            alert('Error generating quote.');
+          },
+        });
+      },
+      error: (error) => {
+        console.error('Error registering vehicle:', error);
+        alert('Error registering vehicle.');
+      },
+    });
   }
 
   isFormValid(): boolean {
@@ -180,13 +198,11 @@ export class ServiceDetailsComponent implements OnInit {
       return false;
     }
 
-      // Check insurance details if insurance is selected
-      if (this.hasInsurance) {
-        return !!(this.selectedInsuranceProvider &&
-                 this.userDetails.fullName.trim() &&
-                 this.userDetails.email.trim() &&
-                 this.userDetails.kraPin.trim());
-      }
+    if (this.hasInsurance) {
+      return !!(this.selectedInsuranceProvider &&
+        this.userDetails.fullName.trim() &&
+        this.userDetails.email.trim() &&
+        this.userDetails.kraPin.trim());
     }
 
     return true;

@@ -76,4 +76,9 @@ export class ApiService {
   getInsuranceProviders(): Observable<InsuranceProvider[]> {
     return this.http.get<InsuranceProvider[]>(`${this.apiUrl}/insurance-providers/`);
   }
+
+  submitService(serviceData: any): Observable<any> {
+    return this.http.post<any>(`${this.apiUrl}/submit-service/`, serviceData);
+  }
+  
 }

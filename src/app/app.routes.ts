@@ -7,6 +7,7 @@ import { StatementOfAccountComponent } from './statement-of-account/statement-of
 import { WorkingProgressComponent } from './working-progress/working-progress.component';
 import { GenerateOrderComponent } from './generate-order/generate-order.component';
 import { ServiceDetailsComponent } from './service-details/service-details.component';
+import { HeaderComponent } from './header/header.component';
 export const routes: Routes = [
   { path: '', component: RegisterCarComponent },
   { path: 'display-services', component: DisplayServicesComponent },
@@ -15,5 +16,6 @@ export const routes: Routes = [
   { path: 'generate-order', component: GenerateOrderComponent },
   { path: 'statement-of-accounts', component: StatementOfAccountComponent },
   { path: 'working-progress', component: WorkingProgressComponent },
-  { path: 'service-details', component: ServiceDetailsComponent }
+  { path: 'service-details', component: ServiceDetailsComponent },
+  { path: 'header', component: HeaderComponent },
 ];

@@ -15,9 +15,12 @@
         <label class="block font-semibold">Vehicle Model</label>
         <select [(ngModel)]="selectedModel" name="model" class="border p-2 w-full">
           <option value="">Select Model</option>
-          <option *ngFor="let model of vehicleModels" [value]="model.id">{{ model.name }}</option>
+          <option *ngFor="let model of vehicleModels" [value]="model.id">
+            {{ model.model }}
+          </option>
         </select>
       </div>
+      
   
       <div class="mb-4">
         <label class="block font-semibold">Registration Number</label>

@@ -31,6 +31,7 @@ interface VehicleMake {
 interface VehicleModel {
   id: number;
   name: string;
+  model: string;  // Ensure this property exists
 }
 
 interface WindscreenType {
@@ -117,8 +118,13 @@ export class ServiceDetailsComponent implements OnInit {
   onMakeChange(): void {
     if (this.selectedMake) {
       this.apiService.getVehicleModels(+this.selectedMake).subscribe({
-        next: (models: VehicleModel[]) => {
-          this.vehicleModels = models;
+        next: (models: any[]) => {
+          console.log('API Response:', models); // Log API response
+          this.vehicleModels = models.map(model => ({
+            id: model.id,
+            name: model.name,
+            model: model.model ?? model.name // Ensure 'model' is assigned correctly
+          }));
         },
         error: (error: any) => console.error('Error fetching vehicle models:', error)
       });
@@ -127,6 +133,8 @@ export class ServiceDetailsComponent implements OnInit {
       this.selectedModel = '';
     }
   }
+  
+  
 
   fetchWindscreenTypes(): void {
     this.apiService.getWindscreenTypes().subscribe({

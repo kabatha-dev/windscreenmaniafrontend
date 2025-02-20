@@ -5,6 +5,7 @@ import { FormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { HeaderComponent } from "../header/header.component";
+import { SharedService } from '../services/shared.service';
 
 @Component({
   selector: 'app-register-car',
@@ -19,11 +20,19 @@ export class RegisterCarComponent {
     year_of_make: '',
   };
 
-  constructor(private apiService: ApiService, private router: Router) {}
+  constructor(
+    private apiService: ApiService, 
+    private sharedService: SharedService, // Inject SharedService
+    private router: Router
+  ) {}
 
   registerCar() {
     this.apiService.registerVehicle(this.vehicleData).subscribe((response) => {
       if (response && response.services) {
+        // Store vehicle details in SharedService
+        this.sharedService.setVehicleData(this.vehicleData);
+
+        // Navigate to services page
         this.router.navigate(['/display-services'], { state: { services: response.services } });
       }
     });

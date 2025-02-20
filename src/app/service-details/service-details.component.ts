@@ -36,6 +36,8 @@ export class ServiceDetailsComponent implements OnInit {
   selectedMake: number | null = null;
   selectedModel: number | null = null;
   isSubmitting = false;
+  
+  vehicleData = { registration_number: '', year_of_make: '' }; // Store vehicle details
 
   constructor(
     private router: Router,
@@ -47,6 +49,7 @@ export class ServiceDetailsComponent implements OnInit {
     this.loadSavedData();
     this.fetchVehicleMakes();
     this.fetchWindscreenTypes();
+    this.loadVehicleDetails(); // Load vehicle details from SharedService
   }
 
   fetchVehicleMakes(): void {
@@ -100,6 +103,13 @@ export class ServiceDetailsComponent implements OnInit {
     }
   }
 
+  private loadVehicleDetails(): void {
+    const savedVehicleData = this.sharedService.getVehicleData();
+    if (savedVehicleData) {
+      this.vehicleData = savedVehicleData;
+    }
+  }
+
   submitDetails(): void {
     if (!this.userDetails.fullName || !this.userDetails.kraPin || !this.userDetails.phone) {
       console.error('Please fill in all required user details');
@@ -115,15 +125,18 @@ export class ServiceDetailsComponent implements OnInit {
         customization_id: this.selectedCustomization
       } : null,
       insurance_provider: this.selectedInsuranceProvider,
-      user_details: this.userDetails
+      user_details: this.userDetails,
+      registration_number: this.vehicleData.registration_number, // Include vehicle details
+      year_of_make: this.vehicleData.year_of_make // Include vehicle details
     };
 
     this.apiService.submitService(serviceData).subscribe({
       next: (response) => {
         console.log('Service submitted successfully:', response);
         this.sharedService.clearServiceData();
+        this.sharedService.clearVehicleData(); // Clear vehicle details after submission
         this.isSubmitting = false;
-        this.router.navigate(['/submission-success']);
+        this.router.navigate(['/quote']);
       },
       error: (error) => {
         console.error('Error submitting service:', error);

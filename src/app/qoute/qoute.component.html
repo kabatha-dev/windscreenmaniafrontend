@@ -1,0 +1,40 @@
+<div class="container mx-auto p-6">
+    <h2 class="text-xl font-bold mb-4">Quote Details</h2>
+    
+    <div *ngIf="submittedQuote" class="border p-4 rounded-md bg-gray-100">
+      <p><strong>Quote Number:</strong> {{ submittedQuote.quoteNumber }}</p>
+      <p><strong>Status:</strong> {{ submittedQuote.status }}</p>
+      <p><strong>Selected Services:</strong> {{ submittedQuote.selected_services.join(', ') }}</p>
+      <p><strong>Insurance Provider:</strong> {{ submittedQuote.insurance_provider }}</p>
+      <p><strong>Vehicle:</strong> {{ submittedQuote.registration_number }} ({{ submittedQuote.year_of_make }})</p>
+      
+      <div class="mt-4">
+        <button class="bg-green-500 text-white px-4 py-2 rounded" (click)="approveQuote(submittedQuote.id)">Approve</button>
+        <button class="bg-red-500 text-white px-4 py-2 rounded ml-2" (click)="rejectQuote(submittedQuote.id)">Reject</button>
+        <button class="bg-gray-500 text-white px-4 py-2 rounded ml-2" (click)="pendingQuote(submittedQuote.id)">Pending</button>
+      </div>
+    </div>
+  
+    <h3 class="text-lg font-bold mt-6">All Quotes</h3>
+    <table class="w-full border-collapse border border-gray-300 mt-4">
+      <thead>
+        <tr class="bg-gray-200">
+          <th class="border p-2">Quote Number</th>
+          <th class="border p-2">Status</th>
+          <th class="border p-2">Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let quote of allQuotes">
+          <td class="border p-2">{{ quote.quoteNumber }}</td>
+          <td class="border p-2">{{ quote.status }}</td>
+          <td class="border p-2">
+            <button class="bg-green-500 text-white px-2 py-1 rounded" (click)="approveQuote(quote.id)">Approve</button>
+            <button class="bg-red-500 text-white px-2 py-1 rounded ml-2" (click)="rejectQuote(quote.id)">Reject</button>
+            <button class="bg-gray-500 text-white px-2 py-1 rounded ml-2" (click)="pendingQuote(quote.id)">Pending</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  

@@ -80,5 +80,10 @@ export class ApiService {
   submitService(serviceData: any): Observable<any> {
     return this.http.post<any>(`${this.apiUrl}/submit-service/`, serviceData);
   }
+
+  getQuotes(): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}/quotes/`);
+  }
+  
   
 }

@@ -1,5 +1,5 @@
-import { Component, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Component, OnInit, PLATFORM_ID, Inject } from '@angular/core';
+import { CommonModule,isPlatformBrowser } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { ApiService } from '../api.service';
@@ -31,7 +31,7 @@ interface VehicleMake {
 interface VehicleModel {
   id: number;
   name: string;
-  model: string;  
+  model: string;
 }
 
 interface WindscreenType {
@@ -90,28 +90,66 @@ export class ServiceDetailsComponent implements OnInit {
 
   constructor(
     private apiService: ApiService,
-    private router: Router
+    private router: Router,
+    @Inject(PLATFORM_ID) private platformId: Object
+
   ) {
     const navigation = this.router.getCurrentNavigation();
     if (navigation?.extras.state) {
       this.selectedServices = navigation.extras.state['selectedServices'];
       this.hasWindscreenService = this.selectedServices.includes(1);
     }
+
+    // Load saved data from localStorage if exists
+    this.loadSavedData();
   }
 
   ngOnInit(): void {
     this.fetchVehicleMakes();
     if (this.hasWindscreenService) {
-      // this.fetchWindscreenTypes();
+      this.fetchWindscreenTypes();
+    }
+  }
+
+   private loadSavedData(): void {
+    if (isPlatformBrowser(this.platformId)) {
+      try {
+        const savedData = this.getFromLocalStorage();
+        if (savedData) {
+          this.selectedMake = savedData.vehicle_make || '';
+          this.selectedModel = savedData.vehicle_model || '';
+          this.selectedWindscreenType = savedData.windscreen_type || '';
+          this.selectedCustomization = savedData.windscreen_customization || '';
+          this.selectedInsuranceProvider = savedData.insurance_provider || '';
+          this.userDetails = savedData.user_details || this.userDetails;
+          this.vehicleDetails = savedData.vehicle_details || this.vehicleDetails;
+          this.selectedServices = savedData.selected_services || [];
+        }
+      } catch (error) {
+        console.error('Error loading saved data:', error);
+      }
     }
   }
 
   fetchVehicleMakes(): void {
-    this.apiService.getVehicleMakes().subscribe({
-      next: (makes: VehicleMake[]) => {
-        this.vehicleMakes = makes;
-      },
-      error: (error: any) => console.error('Error fetching vehicle makes:', error)
+    this.apiService.getVehicleMakes().subscribe(makes => {
+      this.vehicleMakes = makes;
+    });
+  }
+
+  fetchVehicleModels(makeId: number): void {
+    this.apiService.getVehicleModels(Number(makeId)).subscribe(models => {
+      this.vehicleModels = models.map(model => ({
+        id: model.id,
+        name: model.name,
+        model: model.name
+      }));
+    });
+  }
+
+  fetchWindscreenTypes(): void {
+    this.apiService.getWindscreenTypes().subscribe(types => {
+      this.windscreenTypes = types;
     });
   }
 
@@ -132,79 +170,16 @@ export class ServiceDetailsComponent implements OnInit {
       this.selectedModel = '';
     }
   }
-  
 
-
-  submitDetails() {
-    const requestData = {
-      vehicle_make: this.selectedMake,
-      vehicle_model: this.selectedModel,
-      selected_services: this.selectedServices,
-      windscreen_type: this.selectedWindscreenType,
-      windscreen_customization: this.selectedCustomization,
-      insurance_provider: this.selectedInsuranceProvider,
-      user_details: this.userDetails,
-    };
-
-    this.apiService.registerVehicle(requestData).subscribe({
-      next: (response) => {
-        console.log('Vehicle registered successfully:', response);
-
-        // Generate quote after registering the vehicle
-        this.apiService.generateQuote(response.vehicleId, this.selectedServices).subscribe({
-          next: (quoteResponse) => {
-            console.log('Generated Quote:', quoteResponse);
-            alert(`Quote Generated: ${quoteResponse.totalCost}`);
-
-            // Submit the service after quote approval
-            const serviceData = {
-              vehicle_id: response.vehicleId,
-              quote_number: quoteResponse.quoteNumber,
-              selected_services: this.selectedServices,
-              user_details: this.userDetails,
-            };
-
-            this.apiService.submitService(serviceData).subscribe({
-              next: (submitResponse) => {
-                console.log('Service submitted successfully:', submitResponse);
-                alert('Service request submitted successfully!');
-                this.router.navigate(['/confirmation']); // Redirect to confirmation page
-              },
-              error: (error) => {
-                console.error('Error submitting service:', error);
-                alert('Error submitting service request.');
-              },
-            });
-          },
-          error: (error) => {
-            console.error('Error generating quote:', error);
-            alert('Error generating quote.');
-          },
-        });
-      },
-      error: (error) => {
-        console.error('Error registering vehicle:', error);
-        alert('Error registering vehicle.');
-      },
+  submitDetails(): void {
+    console.log('Form submitted:', {
+      vehicleMake: this.selectedMake,
+      vehicleModel: this.selectedModel,
+      userDetails: this.userDetails
     });
   }
 
-  isFormValid(): boolean {
-    if (!this.selectedMake || !this.selectedModel || !this.vehicleDetails.registrationNumber.trim()) {
-      return false;
-    }
-
-    if (this.hasWindscreenService && (!this.selectedWindscreenType || !this.selectedCustomization)) {
-      return false;
-    }
-
-    if (this.hasInsurance) {
-      return !!(this.selectedInsuranceProvider &&
-        this.userDetails.fullName.trim() &&
-        this.userDetails.email.trim() &&
-        this.userDetails.kraPin.trim());
-    }
-
-    return true;
+  private getFromLocalStorage(): any {
+    return JSON.parse(localStorage.getItem('serviceDetails') || '{}');
   }
 }

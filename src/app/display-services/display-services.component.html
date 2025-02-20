@@ -64,6 +64,19 @@
         </option>
       </select>
 
+         <!-- Full Name -->
+         <div class="mb-3">
+          <label class="block text-sm font-medium mb-1">Full Name:</label>
+          <input 
+            type="text" 
+            [(ngModel)]="userDetails.fullName" 
+            name="fullName" 
+            class="w-full p-2 border rounded" 
+            placeholder="Enter your full name"
+            required
+          />
+        </div>
+
       <!-- KRA PIN -->
       <label class="block text-sm font-medium mt-2">KRA PIN:</label>
       <input 

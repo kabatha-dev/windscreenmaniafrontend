@@ -4,7 +4,8 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { HttpErrorResponse } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { SharedService } from '../services/shared.service';
+
 
 interface Service {
   id: number;
@@ -51,7 +52,7 @@ export class DisplayServicesComponent implements OnInit {
     phone: ''
   };
 
-  constructor(private apiService: ApiService, private router: Router) {}
+  constructor(private apiService: ApiService, private router: Router, private sharedService: SharedService) {}
 
   ngOnInit() {
     this.fetchServices();
@@ -127,39 +128,20 @@ export class DisplayServicesComponent implements OnInit {
     );
   }
 
+
   selectServices() {
-    this.selectedServices = this.services
-      .filter(service => service.selected)
-      .map(service => service.id);
+    this.selectedServices = this.services.filter(s => s.selected).map(s => s.id);
 
-    console.log('Selected Services:', this.selectedServices);
+    const serviceData = {
+      selectedServices: this.selectedServices,
+      windscreenType: this.selectedWindscreenType,
+      windscreenCustomizations: this.selectedCustomization,
+      insuranceProvider: this.selectedInsurance,
+      userDetails: this.userDetails
+    };
 
-    if (this.hasWindscreenReplacement) {
-      console.log('Windscreen Type:', this.selectedWindscreenType);
-      console.log('Windscreen Customizations:', this.selectedCustomization);
-      console.log('Insurance Provider:', this.selectedInsurance);
-      console.log('User KRA PIN:', this.userDetails.kraPin);
-      console.log('User Phone:', this.userDetails.phone);
-    }
-
-    localStorage.setItem('selectedServices', JSON.stringify(this.selectedServices));
-    localStorage.setItem('selectedWindscreenType', JSON.stringify(this.selectedWindscreenType));
-    localStorage.setItem('selectedCustomization', JSON.stringify(this.selectedCustomization));
-    localStorage.setItem('selectedInsurance', JSON.stringify(this.selectedInsurance));
-    localStorage.setItem('userDetails', JSON.stringify(this.userDetails));
-    
-
-    
-
-    // Navigate with selected services
-    this.router.navigate(['/service-details'], { 
-      state: { 
-        selectedServices: this.selectedServices,
-        windscreenType: this.selectedWindscreenType,
-        windscreenCustomizations: this.selectedCustomization,
-        insuranceProvider: this.selectedInsurance,
-        userDetails: this.userDetails
-      }
-    });
+    this.sharedService.setServiceData(serviceData);
+    this.router.navigate(['/service-details']);
   }
 }
+

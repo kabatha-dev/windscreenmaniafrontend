@@ -82,8 +82,9 @@ export class ApiService {
   }
 
   getQuotes(): Observable<any> {
-    return this.http.get<any>(`${this.apiUrl}/quotes/`);
-  }
+    return this.http.get<any>(`${this.apiUrl}/get-quotes/`);
+}
+
   
   
 }

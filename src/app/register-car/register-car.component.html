@@ -1,24 +1,44 @@
-<app-header></app-header>
-<div class="container mx-auto max-w-lg p-6 bg-white shadow-lg rounded-lg">
-  <h2 class="text-2xl font-bold mb-4 text-center">Register Your Vehicle</h2>
+<div class="layout-container">
+  <app-header></app-header>
+  
+  <div class="content">
+    <app-sidebar></app-sidebar>
 
-  <form (ngSubmit)="registerCar()" class="space-y-4">
-    <!-- Number Plate -->
-    <div>
-      <label for="numberPlate" class="block text-sm font-medium text-gray-700">Number Plate</label>
-      <input id="numberPlate" [(ngModel)]="vehicleData.registration_number" name="numberPlate" required
-             class="w-full p-2 border rounded focus:ring focus:ring-blue-300"/>
+    <div class="container">
+      <h2>Register Your Vehicle</h2>
+      <form [formGroup]="registerForm" (ngSubmit)="registerCar()">
+        
+        <!-- Number Plate -->
+        <div class="form-group">
+          <label for="registration_number">Number Plate</label>
+          <input id="registration_number" formControlName="registration_number" (input)="convertToUppercase()"/>
+          
+          <div *ngIf="registerForm.get('registration_number')?.invalid && registerForm.get('registration_number')?.touched" class="error">
+            <small *ngIf="registerForm.get('registration_number')?.hasError('required')">
+              Number plate is required.
+            </small>
+            <small *ngIf="registerForm.get('registration_number')?.hasError('pattern')">
+              Invalid number plate format. Examples: <br/> ✅ KAA 123A | UN 123X | AMB 123 | CD 123X
+            </small>
+          </div>
+        </div>
+
+        <!-- Year of Make -->
+        <div class="form-group">
+          <label for="year_of_make">Year of Make</label>
+          <input type="number" id="year_of_make" formControlName="year_of_make"/>
+          
+          <div *ngIf="registerForm.get('year_of_make')?.invalid && registerForm.get('year_of_make')?.touched" class="error">
+            <small *ngIf="registerForm.get('year_of_make')?.hasError('required')">Year of make is required.</small>
+            <small *ngIf="registerForm.get('year_of_make')?.hasError('min')">Year must be at least 2000.</small>
+            <small *ngIf="registerForm.get('year_of_make')?.hasError('max')">Year cannot be later than 2025.</small>
+          </div>
+        </div>
+
+        <button type="submit" [disabled]="registerForm.invalid">Register Vehicle</button>
+      </form>
     </div>
+  </div>
 
-    <!-- Year of Make -->
-    <div>
-      <label for="yearOfMake" class="block text-sm font-medium text-gray-700">Year of Make</label>
-      <input type="number" id="yearOfMake" [(ngModel)]="vehicleData.year_of_make" name="yearOfMake" required
-             class="w-full p-2 border rounded focus:ring focus:ring-blue-300"/>
-    </div>
-
-    <button type="submit" class="w-full bg-blue-500 text-white p-2 rounded hover:bg-blue-600">
-      Register Vehicle
-    </button>
-  </form>
+  <app-footer></app-footer>
 </div>

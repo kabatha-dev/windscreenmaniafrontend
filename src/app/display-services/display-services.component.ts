@@ -5,6 +5,9 @@ import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { HttpErrorResponse } from '@angular/common/http';
 import { SharedService } from '../services/shared.service';
+import { HeaderComponent } from "../header/header.component";
+import { SidebarComponent } from "../sidebar/sidebar.component";
+import { FooterComponent } from "../footer/footer.component";
 
 
 interface Service {
@@ -27,7 +30,7 @@ interface WindscreenCustomization {
 @Component({
   selector: 'app-display-services',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, HeaderComponent, SidebarComponent, FooterComponent],
   templateUrl: './display-services.component.html',
   styleUrls: ['./display-services.component.scss'],
 })
@@ -143,5 +146,11 @@ export class DisplayServicesComponent implements OnInit {
     this.sharedService.setServiceData(serviceData);
     this.router.navigate(['/service-details']);
   }
+
+  isServiceSelected(): boolean {
+    return this.services.some(service => service.selected);
+  }
+  
+  
 }
 

@@ -8,6 +8,8 @@ import { GenerateOrderComponent } from './generate-order/generate-order.componen
 import { ServiceDetailsComponent } from './service-details/service-details.component';
 import { HeaderComponent } from './header/header.component';
 import { QuoteComponent } from './qoute/qoute.component';
+import { FooterComponent } from './footer/footer.component';
+import { SidebarComponent } from './sidebar/sidebar.component';
 
 
 
@@ -21,7 +23,9 @@ export const routes: Routes = [
   { path: 'working-progress', component: WorkingProgressComponent },
   { path: 'service-details', component: ServiceDetailsComponent },
   { path: 'header', component: HeaderComponent },
-  { path: 'quote', component: QuoteComponent }
+  { path: 'quote', component: QuoteComponent },
+  { path: 'footer', component: FooterComponent },
+  {path: 'sidebar', component: SidebarComponent}
  
 
 ];

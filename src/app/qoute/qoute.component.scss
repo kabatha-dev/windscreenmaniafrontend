@@ -1,0 +1,78 @@
+/* Container */
+.container {
+    width: 80%;
+    margin: 0 auto;
+    padding: 20px;
+  }
+  
+  /* Headings */
+  .title {
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 16px;
+  }
+  
+  .subtitle {
+    font-size: 20px;
+    font-weight: bold;
+    margin-top: 24px;
+  }
+  
+  /* Quote Box */
+  .quote-box {
+    border: 1px solid #ccc;
+    padding: 16px;
+    border-radius: 6px;
+    background-color: #f3f4f6;
+    margin-bottom: 20px;
+  }
+  
+  /* Table */
+  .quotes-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 16px;
+  }
+  
+  .quotes-table th, .quotes-table td {
+    border: 1px solid #ccc;
+    padding: 10px;
+    text-align: left;
+  }
+  
+  .quotes-table th {
+    background-color: #e5e7eb;
+    font-weight: bold;
+  }
+  
+  /* Buttons */
+  .button-group {
+    margin-top: 16px;
+  }
+  
+  button {
+    padding: 8px 12px;
+    border: none;
+    border-radius: 4px;
+    font-size: 14px;
+    cursor: pointer;
+    color: white;
+    margin-right: 8px;
+  }
+  
+  button:hover {
+    opacity: 0.8;
+  }
+  
+  .approve {
+    background-color: #28a745;
+  }
+  
+  .reject {
+    background-color: #dc3545;
+  }
+  
+  .pending {
+    background-color: #6c757d;
+  }
+  

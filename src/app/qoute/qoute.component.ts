@@ -1,18 +1,21 @@
 import { Component, OnInit } from '@angular/core';
-import { NgFor,NgIf } from '@angular/common';
+import { NgFor, NgIf } from '@angular/common';
+import { Router } from '@angular/router';
 import { ApiService } from '../api.service';
 
 @Component({
   selector: 'app-qoute',
-  imports: [NgFor,NgIf],
+  standalone: true,
+  imports: [NgFor, NgIf],
   templateUrl: './qoute.component.html',
   styleUrl: './qoute.component.scss'
 })
 export class QuoteComponent implements OnInit {
   allQuotes: any[] = [];
   submittedQuote: any | null = null;
+  serviceDetails: { [key: number]: string } = {}; // Store service names by ID
 
-  constructor(private apiService: ApiService) {}
+  constructor(private apiService: ApiService, private router: Router) {}
 
   ngOnInit(): void {
     this.fetchQuotes();
@@ -20,34 +23,91 @@ export class QuoteComponent implements OnInit {
 
   fetchQuotes(): void {
     this.apiService.getQuotes().subscribe({
-      next: (quotes) => {
-        this.allQuotes = quotes;
-        if (quotes.length > 0) {
-          this.submittedQuote = quotes[0]; // Show the first quote by default
-        }
+      next: (quotes: any[]) => {
+        this.allQuotes = quotes.filter(q => q.status !== 'Rejected');
+        this.submittedQuote = this.allQuotes.length > 0 ? this.allQuotes[0] : null;
+        this.fetchServiceDetails();
       },
-      error: (error) => {
+      error: (error: any) => {
         console.error('Error fetching quotes:', error);
       }
     });
   }
+  
 
-  approveQuote(quoteId: string): void {
-    this.apiService.approveQuote(quoteId).subscribe({
-      next: () => {
-        this.fetchQuotes(); // Refresh quotes
+  fetchServiceDetails(): void {
+    this.apiService.getServices().subscribe({
+      next: (services: any[]) => {
+        this.serviceDetails = services.reduce((acc: any, service: any) => {
+          acc[service.id] = service.name;
+          return acc;
+        }, {});
       },
-      error: (error) => {
-        console.error('Error approving quote:', error);
+      error: (error: any) => {
+        console.error('Error fetching services:', error);
       }
     });
   }
 
-  rejectQuote(quoteId: string): void {
-    console.log(`Rejected quote: ${quoteId}`);
+  getServiceNames(serviceIds: number[]): string {
+    return serviceIds.map(id => this.serviceDetails[id] || `Service ${id}`).join(', ');
   }
 
-  pendingQuote(quoteId: string): void {
-    console.log(`Pending quote: ${quoteId}`);
+  approveQuote(quoteId: number): void {
+    this.apiService.updateQuoteStatus(quoteId, 'Approved').subscribe({
+      next: () => {
+        this.apiService.createOrder(quoteId).subscribe({
+          next: () => {
+            this.fetchQuotes(); // Refresh quotes after approval
+          },
+          error: (error: any) => {
+            console.error('Error creating order:', error);
+          }
+        });
+      },
+      error: (error: any) => {
+        console.error('Error approving quote:', error);
+      }
+    });
+  }
+  
+  
+  rejectQuote(quoteId: number): void {
+    this.apiService.updateQuoteStatus(quoteId, 'Rejected').subscribe({
+      next: () => {
+        this.fetchQuotes();
+      },
+      error: (error: any) => {
+        console.error('Error rejecting quote:', error);
+      }
+    });
+  }
+
+  
+  
+
+  pendingQuote(quoteId: number): void {
+    this.updateQuoteLocally(quoteId, 'Pending');
+    this.apiService.updateQuoteStatus(quoteId, 'Pending').subscribe({
+      next: () => {},
+      error: (error: any) => {
+        console.error('Error setting quote to pending:', error);
+      }
+    });
+  }
+
+  private updateQuoteLocally(quoteId: number, status: string): void {
+    const quoteIndex = this.allQuotes.findIndex(q => q.id === quoteId);
+    if (quoteIndex !== -1) {
+      this.allQuotes[quoteIndex].status = status;
+    }
+
+    if (this.submittedQuote && this.submittedQuote.id === quoteId) {
+      this.submittedQuote.status = status;
+    }
+  }
+
+  viewOrders(): void {
+    this.router.navigate(['/order']);
   }
 }

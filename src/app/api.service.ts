@@ -57,12 +57,9 @@ export class ApiService {
       selected_services: selectedServices
     });
   }
-
-
-
   // Create an order from a quote
   createOrder(quoteId: number): Observable<any> {
-    return this.http.post<any>(`${this.apiUrl}/orders/create`, { quote_id: quoteId });
+    return this.http.post<any>(`${this.apiUrl}/orders/create/`, { quote_id: quoteId });
   }
 
   // Get all available services
@@ -109,8 +106,10 @@ export class ApiService {
   getOrders(): Observable<any[]> {
     return this.http.get<any[]>(`${this.apiUrl}/orders`);
   }
+
   updateQuoteStatus(quoteId: number, status: string): Observable<any> {
-    return this.http.patch(`${this.apiUrl}/quotes/${quoteId}/update_status/`, { status });
+    return this.http.patch<any>(`${this.apiUrl}/quotes/${quoteId}/update-status/`, { status });
   }
+  
   
 }

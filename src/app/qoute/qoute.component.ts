@@ -56,9 +56,12 @@ export class QuoteComponent implements OnInit {
   approveQuote(quoteId: number): void {
     this.apiService.updateQuoteStatus(quoteId, 'Approved').subscribe({
       next: () => {
+        console.log(`Quote ${quoteId} approved.`);
+        
         this.apiService.createOrder(quoteId).subscribe({
           next: () => {
-            this.fetchQuotes(); // Refresh quotes after approval
+            console.log(`Order created for quote ${quoteId}.`);
+            this.fetchQuotes(); // Refresh the quotes list
           },
           error: (error: any) => {
             console.error('Error creating order:', error);
@@ -71,17 +74,18 @@ export class QuoteComponent implements OnInit {
     });
   }
   
-  
   rejectQuote(quoteId: number): void {
     this.apiService.updateQuoteStatus(quoteId, 'Rejected').subscribe({
       next: () => {
-        this.fetchQuotes();
+        console.log(`Quote ${quoteId} rejected.`);
+        this.fetchQuotes(); // Refresh the quotes list
       },
       error: (error: any) => {
         console.error('Error rejecting quote:', error);
       }
     });
   }
+  
 
   
   

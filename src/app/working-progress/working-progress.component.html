@@ -1,12 +1,61 @@
-<div class="container mx-auto max-w-lg p-6 bg-white shadow-lg rounded-lg">
-  <h2 class="text-2xl font-bold mb-4 text-center">Work in Progress</h2>
+<div class="container">
+  <h2>Work Progress Submission</h2>
 
-  <div *ngIf="workInProgress; else noWork">
-    <p class="text-gray-700 text-lg">Order Number: <strong>{{ workInProgress.orderNumber }}</strong></p>
-    <p class="text-gray-700">Status: <strong>{{ workInProgress.status }}</strong></p>
-  </div>
+  <form [formGroup]="workInProgressForm" (ngSubmit)="submitForm()">
+    <!-- Vehicle Registration -->
+    <div class="form-group">
+      <label for="vehicle_reg_no">Vehicle Registration Number</label>
+      <input type="text" id="vehicle_reg_no" formControlName="vehicle_reg_no" required />
+    </div>
 
-  <ng-template #noWork>
-    <p class="text-gray-500 text-center">No active orders.</p>
-  </ng-template>
+    <!-- Description -->
+    <div class="form-group">
+      <label for="description">Description</label>
+      <textarea id="description" formControlName="description" required></textarea>
+    </div>
+
+    <!-- User Details -->
+    <h3>User Details</h3>
+
+    <div class="form-group">
+      <label for="name">Full Name</label>
+      <input type="text" id="name" formControlName="name" required />
+    </div>
+
+    <div class="form-group">
+      <label for="krapin">KRA Pin</label>
+      <input type="text" id="krapin" formControlName="krapin" />
+    </div>
+
+    <div class="form-group">
+      <label for="phoneNumber">Phone Number</label>
+      <input type="tel" id="phoneNumber" formControlName="phoneNumber" required />
+    </div>
+
+    <div class="form-group">
+      <label for="email">Email</label>
+      <input type="email" id="email" formControlName="email" required />
+    </div>
+
+    <!-- File Uploads -->
+    <div class="form-group">
+      <label>Upload Images (Max 3)</label>
+      <input type="file" multiple (change)="onImageUpload($event)" accept="image/*" />
+      <div *ngIf="images.length">
+        <p *ngFor="let image of images; let i = index">
+          Image {{ i + 1 }}: {{ image.name }}
+        </p>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label>Upload Satisfaction Note (PDF)</label>
+      <input type="file" (change)="onPdfUpload($event)" accept="application/pdf" />
+      <p *ngIf="pdfFile">Selected File: {{ pdfFile.name }}</p>
+    </div>
+
+    <button type="submit">
+      Submit
+    </button>    
+  </form>
 </div>

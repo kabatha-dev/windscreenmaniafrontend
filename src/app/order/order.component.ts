@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { NgFor } from '@angular/common';
 import { ApiService } from '../api.service';
+import { Router } from '@angular/router';
 
 interface Order {
   approval_time: string;
@@ -21,8 +22,8 @@ interface Service {
 })
 export class OrderComponent implements OnInit {
   orders: any[] = [];
+  constructor(private apiService: ApiService, private router: Router) {}
 
-  constructor(private apiService: ApiService) {}
 
   ngOnInit(): void {
     this.fetchOrders();
@@ -40,6 +41,10 @@ export class OrderComponent implements OnInit {
         console.error('Error fetching orders:', error);
       }
     });
+  }
+
+  createWorkProgress(order: Order): void {
+    this.router.navigate(['/working-progress'], { queryParams: { orderNumber: order['order_number'] } });
   }
   
 }

@@ -110,6 +110,11 @@ export class ApiService {
   updateQuoteStatus(quoteId: number, status: string): Observable<any> {
     return this.http.patch<any>(`${this.apiUrl}/quotes/${quoteId}/update-status/`, { status });
   }
+
+
+  submitWorkProgress(formData: FormData): Observable<any> {
+    return this.http.post<any>(`${this.apiUrl}/work-progress/submit/`, formData);
+  }
   
   
 }

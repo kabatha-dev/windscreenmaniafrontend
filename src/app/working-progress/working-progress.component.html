@@ -1,61 +1,28 @@
 <div class="container">
-  <h2>Work Progress Submission</h2>
-
+  <h2>Work in Progress</h2>
   <form [formGroup]="workInProgressForm" (ngSubmit)="submitForm()">
-    <!-- Vehicle Registration -->
-    <div class="form-group">
-      <label for="vehicle_reg_no">Vehicle Registration Number</label>
-      <input type="text" id="vehicle_reg_no" formControlName="vehicle_reg_no" required />
-    </div>
+    <input formControlName="vehicle_reg_no" placeholder="Vehicle Registration No." (change)="fetchOrderDetails()" required />
+    <input formControlName="name" placeholder="Name" required />
+    <input formControlName="phoneNumber" placeholder="Phone Number" required />
+    <input formControlName="email" type="email" placeholder="Email" required />
+    <textarea formControlName="description" placeholder="Work Description" required></textarea>
 
-    <!-- Description -->
-    <div class="form-group">
-      <label for="description">Description</label>
-      <textarea id="description" formControlName="description" required></textarea>
-    </div>
+    <label>Upload Images (Max 3)</label>
+    <input type="file" (change)="onImageUpload($event)" multiple accept="image/*" />
 
-    <!-- User Details -->
-    <h3>User Details</h3>
+    <label>Upload Satisfaction Note (PDF)</label>
+    <input type="file" (change)="onPdfUpload($event)" accept="application/pdf" />
 
-    <div class="form-group">
-      <label for="name">Full Name</label>
-      <input type="text" id="name" formControlName="name" required />
-    </div>
-
-    <div class="form-group">
-      <label for="krapin">KRA Pin</label>
-      <input type="text" id="krapin" formControlName="krapin" />
-    </div>
-
-    <div class="form-group">
-      <label for="phoneNumber">Phone Number</label>
-      <input type="tel" id="phoneNumber" formControlName="phoneNumber" required />
-    </div>
-
-    <div class="form-group">
-      <label for="email">Email</label>
-      <input type="email" id="email" formControlName="email" required />
-    </div>
-
-    <!-- File Uploads -->
-    <div class="form-group">
-      <label>Upload Images (Max 3)</label>
-      <input type="file" multiple (change)="onImageUpload($event)" accept="image/*" />
-      <div *ngIf="images.length">
-        <p *ngFor="let image of images; let i = index">
-          Image {{ i + 1 }}: {{ image.name }}
-        </p>
-      </div>
-    </div>
-
-    <div class="form-group">
-      <label>Upload Satisfaction Note (PDF)</label>
-      <input type="file" (change)="onPdfUpload($event)" accept="application/pdf" />
-      <p *ngIf="pdfFile">Selected File: {{ pdfFile.name }}</p>
-    </div>
-
-    <button type="submit">
-      Submit
-    </button>    
+    <button type="submit" [disabled]="workInProgressForm.invalid">Submit</button>
   </form>
+
+  <!-- Display Order Details -->
+  <div *ngIf="orderDetails">
+    <h3>Order Details</h3>
+    <p><strong>Vehicle Reg No:</strong> {{ orderDetails.vehicle_reg_no }}</p>
+    <p><strong>Customer:</strong> {{ orderDetails.customer_name }}</p>
+    <p><strong>Phone:</strong> {{ orderDetails.phone }}</p>
+    <p><strong>Service:</strong> {{ orderDetails.service_type }}</p>
+    <p><strong>Status:</strong> {{ orderDetails.status }}</p>
+  </div>
 </div>

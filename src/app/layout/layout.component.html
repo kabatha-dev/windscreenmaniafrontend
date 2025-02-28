@@ -1,0 +1,18 @@
+<div class="layout-container d-flex flex-column min-vh-100">
+    <!-- Header -->
+    <app-header></app-header>
+  
+    <div class="content d-flex flex-grow-1">
+      <!-- Sidebar -->
+      <app-sidebar class="bg-light p-3"></app-sidebar>
+  
+      <!-- Main content from router -->
+      <div class="container p-4 w-100">
+        <router-outlet></router-outlet>
+      </div>
+    </div>
+  
+    <!-- Footer -->
+    <app-footer class="bg-dark text-white text-center py-3 mt-auto"></app-footer>
+  </div>
+  

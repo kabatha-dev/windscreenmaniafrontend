@@ -6,7 +6,7 @@ import { NgFor, NgIf } from '@angular/common';
 @Component({
   selector: 'app-working-progress',
   standalone: true,
-  imports: [ReactiveFormsModule, NgFor, NgIf],
+  imports: [ReactiveFormsModule, NgIf],
   templateUrl: './working-progress.component.html',
   styleUrls: ['./working-progress.component.css'],
 })
@@ -14,17 +14,19 @@ export class WorkingProgressComponent {
   workInProgressForm: FormGroup;
   images: File[] = [];
   pdfFile: File | null = null;
+  orderDetails: any = null; // Store order details
 
   constructor(private fb: FormBuilder, private apiService: ApiService) {
     this.workInProgressForm = this.fb.group({
-      vehicle_reg_no: ['', Validators.required], // Updated to match backend field
-      description: ['', Validators.required], // Added missing field
+      vehicle_reg_no: ['', Validators.required],
+      description: ['', Validators.required],
       name: ['', Validators.required],
       krapin: [''],
       phoneNumber: ['', Validators.required],
       email: ['', [Validators.required, Validators.email]],
     });
   }
+
 
   onImageUpload(event: any): void {
     const files = event.target.files;
@@ -44,6 +46,18 @@ export class WorkingProgressComponent {
     this.pdfFile = file;
   }
 
+  fetchOrderDetails() {
+    const vehicleRegNo = this.workInProgressForm.get('vehicle_reg_no')?.value;
+    if (vehicleRegNo) {
+      this.apiService.getOrderDetails(vehicleRegNo).subscribe({
+        next: (data) => {
+          this.orderDetails = data;
+        },
+        error: (err) => console.error('Error fetching order details:', err),
+      });
+    }
+  }
+
   submitForm(): void {
     if (this.workInProgressForm.invalid || this.images.length < 3 || !this.pdfFile) {
       alert('Please fill in all fields and upload at least 3 images and a PDF.');
@@ -51,32 +65,24 @@ export class WorkingProgressComponent {
     }
 
     const formData = new FormData();
-    formData.append('vehicle_reg_no', this.workInProgressForm.get('vehicle_reg_no')?.value);
-    formData.append('description', this.workInProgressForm.get('description')?.value);
-    formData.append('name', this.workInProgressForm.get('name')?.value);
-    formData.append('krapin', this.workInProgressForm.get('krapin')?.value);
-    formData.append('phoneNumber', this.workInProgressForm.get('phoneNumber')?.value);
-    formData.append('email', this.workInProgressForm.get('email')?.value);
-
-    this.images.forEach((image) => {
-      formData.append('images', image);
+    Object.keys(this.workInProgressForm.controls).forEach((key) => {
+      formData.append(key, this.workInProgressForm.get(key)?.value);
     });
 
+    this.images.forEach((image) => formData.append('images', image));
     if (this.pdfFile) {
       formData.append('satisfactionNote', this.pdfFile);
     }
 
     this.apiService.submitWorkProgress(formData).subscribe({
-      next: (response: any) => {
-        console.log('Submission successful:', response);
+      next: (response) => {
         alert('Work progress submitted successfully!');
+        this.fetchOrderDetails(); // Refresh order details
         this.workInProgressForm.reset();
         this.images = [];
         this.pdfFile = null;
       },
-      error: (error: any) => {
-        console.error('Error submitting work progress:', error);
-      },
+      error: (error) => console.error('Error submitting work progress:', error),
     });
   }
 }

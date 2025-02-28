@@ -1,0 +1,116 @@
+<div class="d-flex flex-column vh-100">
+  
+    <!-- Top Navigation Bar -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-light px-3">
+      <a class="navbar-brand fw-bold" href="#">Windscreen Mania</a>
+      
+      <div class="ms-auto d-flex align-items-center">
+        <!-- Notifications Dropdown -->
+        <div class="dropdown me-3">
+          <button class="btn btn-outline-primary dropdown-toggle" type="button" id="notificationsDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+            🔔 Notifications
+          </button>
+          <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="notificationsDropdown">
+            <li><h6 class="dropdown-header">Alerts</h6></li>
+            <li><a class="dropdown-item" href="#">📌 New Quotes</a></li>
+            <li><a class="dropdown-item" href="#">📦 New Orders</a></li>
+            <li><a class="dropdown-item" href="#">🚧 Work in Progress</a></li>
+            <li><a class="dropdown-item" href="#">📜 Invoices Pending</a></li>
+            <li><a class="dropdown-item" href="#">📉 Stock Updates</a></li>
+          </ul>
+        </div>
+  
+        <!-- User Profile Button -->
+        <button class="btn btn-outline-secondary">👤 Profile</button>
+      </div>
+    </nav>
+  
+    <div class="d-flex flex-grow-1">
+      
+      <!-- Sidebar -->
+      <nav class="bg-primary text-white p-3" style="width: 250px;">
+        <h4 class="text-center">Dashboard</h4>
+        <ul class="nav flex-column">
+          <li class="nav-item"><a class="nav-link text-white" href="#">Dashboard</a></li>
+          <li class="nav-item"><a class="nav-link text-white" href="#">Orders</a></li>
+          <li class="nav-item"><a class="nav-link text-white" href="#">Quotes</a></li>
+          <li class="nav-item"><a class="nav-link text-white" href="#">Reports</a></li>
+          <li class="nav-item"><a class="nav-link text-white" href="#">Stock Management</a></li>
+        </ul>
+      </nav>
+  
+      <!-- Main Content -->
+      <main class="container-fluid p-4">
+        <h2 class="mb-4">Windscreen Mania</h2>
+  
+        <!-- Action Buttons -->
+        <div class="d-flex gap-3 mb-4">
+          <button class="btn btn-success">➕ New Order</button>
+          <button class="btn btn-info">📝 New Quote</button>
+          <button class="btn btn-warning">📑 New Invoice</button>
+          <button class="btn btn-danger">🚀 Work Progress</button>
+          <button class="btn btn-primary">📋 Available Stock</button>
+          <button class="btn btn-dark">➕ Add New Stock</button>
+        </div>
+  
+        <div class="row">
+          <!-- Quotes Table -->
+          <div class="col-md-6">
+            <h5 class="text-center">📜 Quotes</h5>
+            <div *ngIf="loadingQuotes" class="text-center">Loading quotes...</div>
+            <table class="table table-striped table-bordered" *ngIf="!loadingQuotes">
+              <thead class="table-dark">
+                <tr>
+                  <th>Quote Number</th>
+                  <th>Total Cost (Ksh)</th>
+                  <th>Status</th>
+                  <th>Services</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let quote of quotes.slice(0, showMoreQuotes ? quotes.length : 1)">
+                  <td>{{ quote.quote_number }}</td>
+                  <td>{{ quote.total_cost }}</td>
+                  <td><span class="badge bg-success">{{ quote.status }}</span></td>
+                  <td>{{ getServiceNames(quote.services) }}</td>
+                </tr>
+              </tbody>
+            </table>
+            <button *ngIf="quotes.length > 1" class="btn btn-link" (click)="showMoreQuotes = !showMoreQuotes">
+              {{ showMoreQuotes ? 'View Less' : 'View More' }}
+            </button>
+          </div>
+        
+          <!-- Orders Table -->
+          <div class="col-md-6">
+            <h5 class="text-center">📦 Orders</h5>
+            <div *ngIf="loadingOrders" class="text-center">Loading orders...</div>
+            <table class="table table-striped table-bordered" *ngIf="!loadingOrders">
+              <thead class="table-dark">
+                <tr>
+                  <th>Order Number</th>
+                  <th>Quote Number</th>
+                  <th>Total Cost (Ksh)</th>
+                  <th>Services</th>
+                  <th>Approval Time</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let order of orders.slice(0, showMoreOrders ? orders.length : 1)">
+                  <td>{{ order.order_number }}</td>
+                  <td>{{ order.quote_number }}</td>
+                  <td>{{ order.total_cost }}</td>
+                  <td>{{ order.services.join(', ') }}</td>
+                  <td>{{ order.approval_time }}</td>
+                </tr>
+              </tbody>
+            </table>
+            <button *ngIf="orders.length > 1" class="btn btn-link" (click)="showMoreOrders = !showMoreOrders">
+              {{ showMoreOrders ? 'View Less' : 'View More' }}
+            </button>
+          </div>
+        </div>
+      </main>
+    </div>
+  </div>
+  

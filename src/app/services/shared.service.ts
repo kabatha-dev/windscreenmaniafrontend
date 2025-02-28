@@ -1,11 +1,29 @@
 import { Injectable } from '@angular/core';
+import { ApiService } from '../api.service';
+import { Observable } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
 })
 export class SharedService {
   private serviceData: any = null;
-  private vehicleData: any = null; 
+  private vehicleData: any = null;
+  private selectedServices: any[] = [];
+  services: any[] = [];
+
+  constructor(private apiService: ApiService) {}
+
+
+  setServices(services: any[]) { this.services = services; }
+  getServices() { return this.services; }
+
+  setSelectedServices(services: any[]) { this.selectedServices = services; }
+  getSelectedServices() { return this.selectedServices; }
+
+  submitQuote(): Observable<any> {
+    const payload = { vehicle: this.vehicleData, services: this.selectedServices };
+    return this.apiService.createQuote(payload);
+  }
 
   // Methods for service data
   setServiceData(data: any) {

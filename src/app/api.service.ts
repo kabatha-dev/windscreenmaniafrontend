@@ -41,6 +41,9 @@ export interface Quote {
   providedIn: 'root',
 })
 export class ApiService {
+  createQuote(payload: { vehicle: any; services: any[]; }): Observable<any> {
+    throw new Error('Method not implemented.');
+  }
   private apiUrl = 'http://127.0.0.1:8000';
 
   constructor(private http: HttpClient) {}
@@ -115,6 +118,11 @@ export class ApiService {
   submitWorkProgress(formData: FormData): Observable<any> {
     return this.http.post<any>(`${this.apiUrl}/work-progress/submit/`, formData);
   }
+
+  getOrderDetails(vehicleRegNo: string) {
+    return this.http.get(`/api/orders/${vehicleRegNo}`); // Adjust endpoint accordingly
+  }
+  
   
   
 }

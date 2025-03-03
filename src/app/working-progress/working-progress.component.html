@@ -1,28 +1,63 @@
 <div class="container">
   <h2>Work in Progress</h2>
-  <form [formGroup]="workInProgressForm" (ngSubmit)="submitForm()">
-    <input formControlName="vehicle_reg_no" placeholder="Vehicle Registration No." (change)="fetchOrderDetails()" required />
-    <input formControlName="name" placeholder="Name" required />
-    <input formControlName="phoneNumber" placeholder="Phone Number" required />
-    <input formControlName="email" type="email" placeholder="Email" required />
-    <textarea formControlName="description" placeholder="Work Description" required></textarea>
 
-    <label>Upload Images (Max 3)</label>
-    <input type="file" (change)="onImageUpload($event)" multiple accept="image/*" />
+  <!-- Orders Table -->
+  <table class="table">
+    <thead>
+      <tr>
+        <th>Order Number</th>
+        <th>Quote Number</th>
+        <th>Services</th>
+        <th>Total Cost</th>
+        <th>Approval Time</th>
+        <th>Action</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let order of orders">
+        <td>{{ order.order_number }}</td>
+        <td>{{ order.quote_number }}</td>
+        <td>
+          <ul>
+            <li *ngFor="let service of order.services">{{ service }}</li>
+          </ul>
+        </td>
+        <td>{{ order.total_cost | currency }}</td>
+        <td>{{ order.approval_time | date:'short' }}</td>
+        <td>
+          <button (click)="onCreateWorkProgress(order)">Create Work Progress</button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
 
-    <label>Upload Satisfaction Note (PDF)</label>
-    <input type="file" (change)="onPdfUpload($event)" accept="application/pdf" />
+  <!-- Work in Progress Form -->
+  <div *ngIf="selectedOrder">
+    <h3>Create Work Progress for Order #{{ selectedOrder.order_number }}</h3>
+    
+    <form [formGroup]="workInProgressForm" (ngSubmit)="submitForm()">
+      <!-- Vehicle Selection -->
+      <label for="vehicle">Select Vehicle</label>
+      <select formControlName="vehicle" id="vehicle">
+        <option *ngFor="let vehicle of vehicles" [value]="vehicle.id">{{ vehicle.name }}</option>
+      </select>
 
-    <button type="submit" [disabled]="workInProgressForm.invalid">Submit</button>
-  </form>
+      <!-- User Selection -->
+      <label for="user">Select User</label>
+      <select formControlName="user" id="user">
+        <option *ngFor="let user of users" [value]="user.id">{{ user.name }}</option>
+      </select>
 
-  <!-- Display Order Details -->
-  <div *ngIf="orderDetails">
-    <h3>Order Details</h3>
-    <p><strong>Vehicle Reg No:</strong> {{ orderDetails.vehicle_reg_no }}</p>
-    <p><strong>Customer:</strong> {{ orderDetails.customer_name }}</p>
-    <p><strong>Phone:</strong> {{ orderDetails.phone }}</p>
-    <p><strong>Service:</strong> {{ orderDetails.service_type }}</p>
-    <p><strong>Status:</strong> {{ orderDetails.status }}</p>
+      <!-- Upload Images -->
+      <label>Upload Images (Max 3)</label>
+      <input type="file" (change)="onImageUpload($event)" multiple accept="image/*" />
+
+      <!-- Upload Satisfaction Note -->
+      <label>Upload Satisfaction Note (PDF)</label>
+      <input type="file" (change)="onPdfUpload($event)" accept="application/pdf" />
+
+      <!-- Submit Button -->
+      <button type="submit" [disabled]="workInProgressForm.invalid">Submit</button>
+    </form>
   </div>
 </div>

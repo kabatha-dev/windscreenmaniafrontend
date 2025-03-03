@@ -122,7 +122,14 @@ export class ApiService {
   getOrderDetails(vehicleRegNo: string) {
     return this.http.get(`/api/orders/${vehicleRegNo}`); // Adjust endpoint accordingly
   }
-  
-  
-  
+
+  getUserDetails(): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}/get-user-details/`);
+  }
+
+  // Get registered vehicles
+  getRegisteredVehicles(): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl}/get-vehicles/`);
+  }
+   
 }

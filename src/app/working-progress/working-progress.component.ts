@@ -1,23 +1,30 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { ApiService } from '../api.service';
 import { NgFor, NgIf } from '@angular/common';
+import { CurrencyPipe, DatePipe } from '@angular/common';
 
 @Component({
   selector: 'app-working-progress',
   standalone: true,
-  imports: [ReactiveFormsModule, NgIf],
+  imports: [ReactiveFormsModule, NgFor, NgIf, CurrencyPipe, DatePipe],
   templateUrl: './working-progress.component.html',
   styleUrls: ['./working-progress.component.css'],
 })
-export class WorkingProgressComponent {
+export class WorkingProgressComponent implements OnInit {
   workInProgressForm: FormGroup;
+  orders: any[] = [];
+  vehicles: any[] = [];
+  users: any[] = [];
+  selectedOrder: any = null;
   images: File[] = [];
   pdfFile: File | null = null;
-  orderDetails: any = null; // Store order details
+  loadingOrders = false;
 
   constructor(private fb: FormBuilder, private apiService: ApiService) {
     this.workInProgressForm = this.fb.group({
+      vehicle: ['', Validators.required],
+      user: ['', Validators.required],
       vehicle_reg_no: ['', Validators.required],
       description: ['', Validators.required],
       name: ['', Validators.required],
@@ -27,6 +34,48 @@ export class WorkingProgressComponent {
     });
   }
 
+  ngOnInit() {
+    this.fetchOrders();
+  }
+
+  fetchOrders() {
+    this.loadingOrders = true;
+    this.apiService.getOrders().subscribe({
+      next: (orders) => {
+        this.orders = orders;
+        this.loadingOrders = false;
+      },
+      error: (error) => {
+        console.error('Error fetching orders:', error);
+        this.loadingOrders = false;
+      },
+    });
+  }
+
+  fetchVehiclesAndUsers() {
+    this.apiService.getRegisteredVehicles().subscribe({
+      next: (vehicles) => (this.vehicles = vehicles),
+      error: (error) => console.error('Error fetching vehicles:', error),
+    });
+
+    this.apiService.getUserDetails().subscribe({
+      next: (users) => (this.users = users),
+      error: (error) => console.error('Error fetching users:', error),
+    });
+  }
+
+  onCreateWorkProgress(order: any) {
+    this.selectedOrder = order;
+    this.fetchVehiclesAndUsers();
+
+    this.workInProgressForm.patchValue({
+      vehicle_reg_no: order.vehicle_reg_no,
+      name: order.customer_name,
+      phoneNumber: order.phone,
+      email: order.customer_email,
+      description: `Service: ${order.service_type}`,
+    });
+  }
 
   onImageUpload(event: any): void {
     const files = event.target.files;
@@ -46,18 +95,6 @@ export class WorkingProgressComponent {
     this.pdfFile = file;
   }
 
-  fetchOrderDetails() {
-    const vehicleRegNo = this.workInProgressForm.get('vehicle_reg_no')?.value;
-    if (vehicleRegNo) {
-      this.apiService.getOrderDetails(vehicleRegNo).subscribe({
-        next: (data) => {
-          this.orderDetails = data;
-        },
-        error: (err) => console.error('Error fetching order details:', err),
-      });
-    }
-  }
-
   submitForm(): void {
     if (this.workInProgressForm.invalid || this.images.length < 3 || !this.pdfFile) {
       alert('Please fill in all fields and upload at least 3 images and a PDF.');
@@ -75,9 +112,10 @@ export class WorkingProgressComponent {
     }
 
     this.apiService.submitWorkProgress(formData).subscribe({
-      next: (response) => {
+      next: () => {
         alert('Work progress submitted successfully!');
-        this.fetchOrderDetails(); // Refresh order details
+        this.fetchOrders();
+        this.selectedOrder = null;
         this.workInProgressForm.reset();
         this.images = [];
         this.pdfFile = null;

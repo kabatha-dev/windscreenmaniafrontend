@@ -1,10 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { ApiService, Quote } from '../../api.service';
-import { NgIf,NgFor } from '@angular/common';
+import { NgIf, NgFor } from '@angular/common';
 
 @Component({
   selector: 'app-admin-dashboard',
-  imports: [NgIf,NgFor],
+  imports: [NgIf, NgFor],
   standalone: true,
   templateUrl: './admin-dashboard.component.html',
   styleUrls: ['./admin-dashboard.component.css'] 
@@ -12,9 +12,13 @@ import { NgIf,NgFor } from '@angular/common';
 export class AdminDashboardComponent implements OnInit {
   quotes: Quote[] = [];
   orders: any[] = [];
+  userDetails: any[] = []; // Store fetched user details
+  vehicles: any[] = []; // Store fetched vehicle details
   loadingQuotes = false;
   loadingOrders = false;
-  
+  loadingUsers = false;
+  loadingVehicles = false;
+
   showMoreQuotes = false;
   showMoreOrders = false;
 
@@ -23,6 +27,8 @@ export class AdminDashboardComponent implements OnInit {
   ngOnInit() {
     this.fetchQuotes();
     this.fetchOrders();
+    this.fetchUserDetails(); 
+    this.fetchVehicleDetails();
   }
 
   fetchQuotes() {
@@ -49,6 +55,34 @@ export class AdminDashboardComponent implements OnInit {
       error: (error) => {
         console.error('Error fetching orders:', error);
         this.loadingOrders = false;
+      }
+    });
+  }
+
+  fetchUserDetails() {
+    this.loadingUsers = true;
+    this.apiService.getUserDetails().subscribe({
+      next: (data) => {
+        this.userDetails = data;
+        this.loadingUsers = false;
+      },
+      error: (error) => {
+        console.error('Error fetching user details:', error);
+        this.loadingUsers = false;
+      }
+    });
+  }
+
+  fetchVehicleDetails() {
+    this.loadingVehicles = true;
+    this.apiService.getRegisteredVehicles().subscribe({
+      next: (data) => {
+        this.vehicles = data;
+        this.loadingVehicles = false;
+      },
+      error: (error) => {
+        console.error('Error fetching vehicle details:', error);
+        this.loadingVehicles = false;
       }
     });
   }

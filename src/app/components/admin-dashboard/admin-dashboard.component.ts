@@ -12,8 +12,8 @@ import { NgIf, NgFor } from '@angular/common';
 export class AdminDashboardComponent implements OnInit {
   quotes: Quote[] = [];
   orders: any[] = [];
-  userDetails: any[] = []; // Store fetched user details
-  vehicles: any[] = []; // Store fetched vehicle details
+  userDetails: any[] = []; 
+  vehicles: any[] = []; 
   loadingQuotes = false;
   loadingOrders = false;
   loadingUsers = false;
@@ -63,6 +63,7 @@ export class AdminDashboardComponent implements OnInit {
     this.loadingUsers = true;
     this.apiService.getUserDetails().subscribe({
       next: (data) => {
+        console.log
         this.userDetails = data;
         this.loadingUsers = false;
       },
@@ -77,6 +78,7 @@ export class AdminDashboardComponent implements OnInit {
     this.loadingVehicles = true;
     this.apiService.getRegisteredVehicles().subscribe({
       next: (data) => {
+        console.log(data);
         this.vehicles = data;
         this.loadingVehicles = false;
       },

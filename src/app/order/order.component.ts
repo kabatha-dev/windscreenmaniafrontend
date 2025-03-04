@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { NgFor } from '@angular/common';
 import { ApiService } from '../api.service';
 import { Router } from '@angular/router';
+import { SharedService } from '../services/shared.service';
 
 interface Order {
   approval_time: string;
@@ -22,7 +23,7 @@ interface Service {
 })
 export class OrderComponent implements OnInit {
   orders: any[] = [];
-  constructor(private apiService: ApiService, private router: Router) {}
+  constructor(private apiService: ApiService, private router: Router, private sharedService: SharedService) {}
 
 
   ngOnInit(): void {
@@ -42,9 +43,10 @@ export class OrderComponent implements OnInit {
       }
     });
   }
-
   createWorkProgress(order: any) {
-    this.router.navigate(['/working-progress'], { state: { selectedOrder: order } });
+    this.sharedService.setSelectedOrder(order); // Store order
+    this.router.navigate(['/working-progress']); // Navigate
   }
+  
 }
   

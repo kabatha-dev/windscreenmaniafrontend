@@ -15,12 +15,12 @@
       <tr>
         <td>{{ selectedOrder.order_number }}</td>
         <td>{{ selectedOrder.quote_number }}</td>
-        <td>{{ selectedOrder.services.join(', ') }}</td>
+        <td>{{ getServicesList() }}</td>
         <td>{{ selectedOrder.total_cost }}</td>
-        <td>{{ selectedOrder.approval_time }}</td>
+        <td>{{ selectedOrder.approval_time || 'N/A' }}</td>
       </tr>
     </table>
-
+    
     <form [formGroup]="workInProgressForm" (ngSubmit)="submitForm()">
       <div>
         <label for="vehicle">Select Vehicle</label>

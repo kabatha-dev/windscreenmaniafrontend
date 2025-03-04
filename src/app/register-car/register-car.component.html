@@ -1,44 +1,34 @@
-<div class="layout-container">
-  <app-header></app-header>
-  
-  <div class="content">
-    <app-sidebar></app-sidebar>
-
-    <div class="container">
-      <h2>Register Your Vehicle</h2>
+<div class="layout-container d-flex flex-column vh-100">
+  <div class="content d-flex justify-content-center align-items-center flex-grow-1">
+    <div class="container card shadow-lg p-4" style="max-width: 500px;">
+      <h2 class="text-center mb-4">Register Your Vehicle</h2>
+      
       <form [formGroup]="registerForm" (ngSubmit)="registerCar()">
-        
         <!-- Number Plate -->
-        <div class="form-group">
-          <label for="registration_number">Number Plate</label>
-          <input id="registration_number" formControlName="registration_number" (input)="convertToUppercase()"/>
+        <div class="mb-3">
+          <label for="registration_number" class="form-label fw-bold">Number Plate</label>
+          <input id="registration_number" class="form-control" formControlName="registration_number" (input)="convertToUppercase()" />
           
-          <div *ngIf="registerForm.get('registration_number')?.invalid && registerForm.get('registration_number')?.touched" class="error">
-            <small *ngIf="registerForm.get('registration_number')?.hasError('required')">
-              Number plate is required.
-            </small>
-            <small *ngIf="registerForm.get('registration_number')?.hasError('pattern')">
-              Invalid number plate format. Examples: <br/> ✅ KAA 123A | UN 123X | AMB 123 | CD 123X
-            </small>
+          <div *ngIf="registerForm.get('registration_number')?.invalid && registerForm.get('registration_number')?.touched" class="text-danger small">
+            <small *ngIf="registerForm.get('registration_number')?.hasError('required')">Number plate is required.</small>
+            <small *ngIf="registerForm.get('registration_number')?.hasError('pattern')">Invalid format. Examples: KAA 123A, UN 123X.</small>
           </div>
         </div>
 
         <!-- Year of Make -->
-        <div class="form-group">
-          <label for="year_of_make">Year of Make</label>
-          <input type="number" id="year_of_make" formControlName="year_of_make"/>
+        <div class="mb-3">
+          <label for="year_of_make" class="form-label fw-bold">Year of Make</label>
+          <input type="number" id="year_of_make" class="form-control" formControlName="year_of_make" />
           
-          <div *ngIf="registerForm.get('year_of_make')?.invalid && registerForm.get('year_of_make')?.touched" class="error">
+          <div *ngIf="registerForm.get('year_of_make')?.invalid && registerForm.get('year_of_make')?.touched" class="text-danger small">
             <small *ngIf="registerForm.get('year_of_make')?.hasError('required')">Year of make is required.</small>
             <small *ngIf="registerForm.get('year_of_make')?.hasError('min')">Year must be at least 2000.</small>
             <small *ngIf="registerForm.get('year_of_make')?.hasError('max')">Year cannot be later than 2025.</small>
           </div>
         </div>
 
-        <button type="submit" [disabled]="registerForm.invalid">Register Vehicle</button>
+        <button type="submit" class="btn btn-primary w-100" [disabled]="registerForm.invalid">Register Vehicle</button>
       </form>
     </div>
   </div>
-
-  <app-footer></app-footer>
 </div>

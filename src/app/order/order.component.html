@@ -6,7 +6,7 @@
         <th>Order Number</th>
         <th>Services</th>
         <th>Total Cost</th>
-        <th>Approval Time</th>
+        <th>created_at</th>
         <th>Actions</th>
       </tr>
     </thead>
@@ -15,7 +15,7 @@
         <td>{{ order.order_number }}</td>
         <td>{{ order.services }}</td>
         <td>Ksh {{ order.total_cost }}</td>
-        <td>{{ order.approval_time }}</td>
+        <td>{{ order.created_at }}</td>
         <td>
           <button (click)="createWorkProgress(order)">Create Work Progress</button>
         </td>

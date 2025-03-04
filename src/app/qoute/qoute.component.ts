@@ -86,10 +86,6 @@ export class QuoteComponent implements OnInit {
     });
   }
   
-
-  
-  
-
   pendingQuote(quoteId: number): void {
     this.updateQuoteLocally(quoteId, 'Pending');
     this.apiService.updateQuoteStatus(quoteId, 'Pending').subscribe({

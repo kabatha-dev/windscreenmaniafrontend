@@ -1,9 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ApiService } from '../api.service';
-import { ActivatedRoute, Router } from '@angular/router';
+import { Router } from '@angular/router';
 import { ReactiveFormsModule } from '@angular/forms';
-import { NgIf,NgFor } from '@angular/common';
+import { NgIf, NgFor } from '@angular/common';
+import { SharedService } from '../services/shared.service';
 
 @Component({
   selector: 'app-working-progress',
@@ -24,8 +25,8 @@ export class WorkingProgressComponent implements OnInit {
   constructor(
     private fb: FormBuilder,
     private apiService: ApiService,
-    private route: ActivatedRoute,
-    private router: Router
+    private router: Router,
+    private sharedService: SharedService
   ) {
     this.workInProgressForm = this.fb.group({
       vehicle: ['', Validators.required],
@@ -38,32 +39,20 @@ export class WorkingProgressComponent implements OnInit {
     });
   }
 
-  ngOnInit() {
-    // Retrieve order details from navigation state
-    const navigation = this.router.getCurrentNavigation();
-    if (navigation?.extras.state?.['selectedOrder']) {
-      this.selectedOrder = navigation.extras.state['selectedOrder'];
-      sessionStorage.setItem('selectedOrder', JSON.stringify(this.selectedOrder));
-    } else {
-      // If page is refreshed, retrieve from sessionStorage
-      const savedOrder = sessionStorage.getItem('selectedOrder');
-      this.selectedOrder = savedOrder ? JSON.parse(savedOrder) : null;
+  ngOnInit(): void {
+    this.selectedOrder = this.sharedService.getSelectedOrder(); // Fetch selected order
+    
+    if (!this.selectedOrder) {
+      console.warn('⚠️ No order found. Redirecting to orders page.');
+      this.router.navigate(['/orders']);
+      return;
     }
-  
-    if (this.selectedOrder) {
-      this.fetchVehiclesAndUsers();
-      this.workInProgressForm.patchValue({
-        vehicle_reg_no: this.selectedOrder.vehicle_reg_no,
-        name: this.selectedOrder.customer_name,
-        phoneNumber: this.selectedOrder.phone,
-        email: this.selectedOrder.customer_email,
-        description: `Service: ${this.selectedOrder.services.join(', ')}`,
-      });
-    }
+    
+    console.log('✅ Selected Order:', this.selectedOrder);
+    this.fetchVehiclesAndUsers();
   }
-  
 
-  fetchVehiclesAndUsers() {
+  fetchVehiclesAndUsers(): void {
     this.apiService.getRegisteredVehicles().subscribe({
       next: (vehicles) => (this.vehicles = vehicles),
       error: (error) => console.error('Error fetching vehicles:', error),
@@ -73,6 +62,13 @@ export class WorkingProgressComponent implements OnInit {
       next: (users) => (this.users = users),
       error: (error) => console.error('Error fetching users:', error),
     });
+  }
+
+  getServicesList(): string {
+    if (this.selectedOrder && Array.isArray(this.selectedOrder.services)) {
+      return this.selectedOrder.services.join(', ');
+    }
+    return this.selectedOrder?.services || 'No services available';
   }
 
   onImageUpload(event: any): void {
@@ -94,29 +90,28 @@ export class WorkingProgressComponent implements OnInit {
   }
 
   submitForm(): void {
-    if (this.workInProgressForm.invalid || this.images.length < 3 || !this.pdfFile) {
-      alert('Please fill in all fields and upload at least 3 images and a PDF.');
-      return;
+    if (this.workInProgressForm.valid) {
+      const formData = new FormData();
+      formData.append('order', JSON.stringify(this.selectedOrder));
+      formData.append('vehicleId', this.workInProgressForm.value.vehicle);
+      formData.append('userId', this.workInProgressForm.value.user);
+      formData.append('description', this.workInProgressForm.value.description);
+
+      this.images.forEach((image) => formData.append('images', image));
+      if (this.pdfFile) {
+        formData.append('satisfactionNote', this.pdfFile);
+      }
+
+      this.apiService.submitWorkProgress(formData).subscribe({
+        next: () => {
+          alert('✅ Work progress submitted successfully!');
+          this.workInProgressForm.reset();
+          this.images = [];
+          this.pdfFile = null;
+          this.router.navigate(['/orders']);
+        },
+        error: (error) => console.error('❌ Error submitting work progress:', error),
+      });
     }
-
-    const formData = new FormData();
-    Object.keys(this.workInProgressForm.controls).forEach((key) => {
-      formData.append(key, this.workInProgressForm.get(key)?.value);
-    });
-
-    this.images.forEach((image) => formData.append('images', image));
-    if (this.pdfFile) {
-      formData.append('satisfactionNote', this.pdfFile);
-    }
-
-    this.apiService.submitWorkProgress(formData).subscribe({
-      next: () => {
-        alert('Work progress submitted successfully!');
-        this.workInProgressForm.reset();
-        this.images = [];
-        this.pdfFile = null;
-      },
-      error: (error) => console.error('Error submitting work progress:', error),
-    });
   }
 }

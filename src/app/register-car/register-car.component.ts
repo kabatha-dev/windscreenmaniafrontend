@@ -4,15 +4,13 @@ import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 import { Router } from '@angular/router';
-import { HeaderComponent } from "../header/header.component";
 import { SharedService } from '../services/shared.service';
-import { SidebarComponent } from "../sidebar/sidebar.component";
-import { FooterComponent } from "../footer/footer.component";
+
 
 @Component({
   selector: 'app-register-car',
   standalone: true,
-  imports: [CommonModule, FormsModule, ReactiveFormsModule, HttpClientModule, HeaderComponent, SidebarComponent, FooterComponent],
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, HttpClientModule],
   templateUrl: './register-car.component.html',
   styleUrls: ['./register-car.component.scss'],
 })

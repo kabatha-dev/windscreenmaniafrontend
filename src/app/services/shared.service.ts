@@ -9,6 +9,7 @@ export class SharedService {
   private serviceData: any = null;
   private vehicleData: any = null;
   private selectedServices: any[] = [];
+  private selectedOrder: any = null;
   services: any[] = [];
 
   constructor(private apiService: ApiService) {}
@@ -49,4 +50,19 @@ export class SharedService {
   clearVehicleData() {
     this.vehicleData = null;
   }
+ 
+  
+  
+    setSelectedOrder(order: any) {
+      this.selectedOrder = order;
+    }
+  
+    getSelectedOrder() {
+      return this.selectedOrder;
+    }
+  
+    clearSelectedOrder() {
+      this.selectedOrder = null;
+    }
+  
 }

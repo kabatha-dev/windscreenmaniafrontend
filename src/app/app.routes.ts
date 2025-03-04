@@ -8,14 +8,15 @@ import { ServiceDetailsComponent } from './service-details/service-details.compo
 import { QuoteComponent } from './qoute/qoute.component';
 import { OrderComponent } from './order/order.component';
 import { AdminDashboardComponent } from './components/admin-dashboard/admin-dashboard.component';
+// import { LayoutComponent } from './layout/layout.component'; // Uncomment if you have a LayoutComponent
 
 export const routes: Routes = [
-   { path: '', component: AdminDashboardComponent },
+  { path: '', component: AdminDashboardComponent }, // Default route
+
   {
-    path: '',
-    // component: LayoutComponent, 
+    path: '', // Parent route for child components
+    // component: LayoutComponent, // Uncomment if needed
     children: [
-     
       { path: 'register', component: RegisterCarComponent },
       { path: 'display-services', component: DisplayServicesComponent },
       { path: 'generate-invoice', component: GenerateInvoiceComponent },
@@ -24,7 +25,9 @@ export const routes: Routes = [
       { path: 'service-details', component: ServiceDetailsComponent },
       { path: 'quote', component: QuoteComponent },
       { path: 'order', component: OrderComponent },
-    ]
-  }
+    ],
+  },
+
+  // Redirect any unknown route to AdminDashboard
+  { path: '**', redirectTo: '', pathMatch: 'full' },
 ];
- 

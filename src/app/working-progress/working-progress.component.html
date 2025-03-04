@@ -1,63 +1,60 @@
 <div class="container">
   <h2>Work in Progress</h2>
 
-  <!-- Orders Table -->
-  <table class="table">
-    <thead>
+  <div *ngIf="selectedOrder">
+    <h3>Create Work Progress for Order #{{ selectedOrder.order_number }}</h3>
+
+    <table border="1">
       <tr>
         <th>Order Number</th>
         <th>Quote Number</th>
         <th>Services</th>
         <th>Total Cost</th>
         <th>Approval Time</th>
-        <th>Action</th>
       </tr>
-    </thead>
-    <tbody>
-      <tr *ngFor="let order of orders">
-        <td>{{ order.order_number }}</td>
-        <td>{{ order.quote_number }}</td>
-        <td>
-          <ul>
-            <li *ngFor="let service of order.services">{{ service }}</li>
-          </ul>
-        </td>
-        <td>{{ order.total_cost | currency }}</td>
-        <td>{{ order.approval_time | date:'short' }}</td>
-        <td>
-          <button (click)="onCreateWorkProgress(order)">Create Work Progress</button>
-        </td>
+      <tr>
+        <td>{{ selectedOrder.order_number }}</td>
+        <td>{{ selectedOrder.quote_number }}</td>
+        <td>{{ selectedOrder.services.join(', ') }}</td>
+        <td>{{ selectedOrder.total_cost }}</td>
+        <td>{{ selectedOrder.approval_time }}</td>
       </tr>
-    </tbody>
-  </table>
+    </table>
 
-  <!-- Work in Progress Form -->
-  <div *ngIf="selectedOrder">
-    <h3>Create Work Progress for Order #{{ selectedOrder.order_number }}</h3>
-    
     <form [formGroup]="workInProgressForm" (ngSubmit)="submitForm()">
-      <!-- Vehicle Selection -->
-      <label for="vehicle">Select Vehicle</label>
-      <select formControlName="vehicle" id="vehicle">
-        <option *ngFor="let vehicle of vehicles" [value]="vehicle.id">{{ vehicle.name }}</option>
-      </select>
+      <div>
+        <label for="vehicle">Select Vehicle</label>
+        <select formControlName="vehicle" id="vehicle">
+          <option *ngFor="let vehicle of vehicles" [value]="vehicle.id">
+            {{ vehicle.registration_number || 'Unknown Vehicle' }}
+          </option>
+        </select>
+      </div>
 
-      <!-- User Selection -->
-      <label for="user">Select User</label>
-      <select formControlName="user" id="user">
-        <option *ngFor="let user of users" [value]="user.id">{{ user.name }}</option>
-      </select>
+      <div>
+        <label for="user">Select User</label>
+        <select formControlName="user" id="user">
+          <option *ngFor="let user of users" [value]="user.id">{{ user.full_name }}</option>
+        </select>
+      </div>
 
-      <!-- Upload Images -->
-      <label>Upload Images (Max 3)</label>
-      <input type="file" (change)="onImageUpload($event)" multiple accept="image/*" />
+      <div>
+        <label>Upload Images (Max 3)</label>
+        <input type="file" (change)="onImageUpload($event)" multiple accept="image/*" />
+      </div>
 
-      <!-- Upload Satisfaction Note -->
-      <label>Upload Satisfaction Note (PDF)</label>
-      <input type="file" (change)="onPdfUpload($event)" accept="application/pdf" />
+      <div>
+        <label>Upload Satisfaction Note (PDF)</label>
+        <input type="file" (change)="onPdfUpload($event)" accept="application/pdf" />
+      </div>
 
-      <!-- Submit Button -->
-      <button type="submit" [disabled]="workInProgressForm.invalid">Submit</button>
+      <div>
+        <button type="submit" [disabled]="workInProgressForm.invalid">Submit</button>
+      </div>
     </form>
+  </div>
+
+  <div *ngIf="!selectedOrder">
+    <p>No order details available.</p>
   </div>
 </div>

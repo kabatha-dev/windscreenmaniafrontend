@@ -43,9 +43,8 @@ export class OrderComponent implements OnInit {
     });
   }
 
-  createWorkProgress(order: Order): void {
-    this.router.navigate(['/working-progress'], { queryParams: { orderNumber: order['order_number'] } });
+  createWorkProgress(order: any) {
+    this.router.navigate(['/working-progress'], { state: { selectedOrder: order } });
   }
-  
 }
   

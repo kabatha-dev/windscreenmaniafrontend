@@ -131,5 +131,18 @@ export class ApiService {
   getRegisteredVehicles(): Observable<any[]> {
     return this.http.get<any[]>(`${this.apiUrl}/get-vehicles/`);
   }
+
+  getOrderByNumber(orderNumber: string): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}/orders/${orderNumber}`);
+  }
    
+  // Store the selected order
+  setSelectedOrder(order: any): void {
+    this.setSelectedOrder = order;
+  }
+
+  // Retrieve the selected order
+  getSelectedOrder(): any {
+    return this.setSelectedOrder;
+  }
 }

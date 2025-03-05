@@ -4,7 +4,7 @@
   <div *ngIf="selectedOrder">
     <h3>Create Work Progress for Order #{{ selectedOrder.order_number }}</h3>
 
-    <table border="1">
+    <table>
       <tr>
         <th>Order Number</th>
         <th>Quote Number</th>
@@ -48,9 +48,9 @@
         <input type="file" (change)="onPdfUpload($event)" accept="application/pdf" />
       </div>
 
-      <div>
-        <button type="submit" [disabled]="workInProgressForm.invalid">Submit</button>
-      </div>
+      <button type="submit" [disabled]="workInProgressForm.invalid || loading">
+        {{ loading ? 'Loading...' : 'Submit' }}
+      </button>
     </form>
   </div>
 

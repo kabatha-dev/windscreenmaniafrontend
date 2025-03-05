@@ -31,11 +31,7 @@ export class WorkingProgressComponent implements OnInit {
     this.workInProgressForm = this.fb.group({
       vehicle: ['', Validators.required],
       user: ['', Validators.required],
-      vehicle_reg_no: ['', Validators.required],
-      description: ['', Validators.required],
-      name: ['', Validators.required],
-      phoneNumber: ['', Validators.required],
-      email: ['', [Validators.required, Validators.email]],
+      // description: ['', Validators.required],
     });
   }
 
@@ -72,46 +68,63 @@ export class WorkingProgressComponent implements OnInit {
   }
 
   onImageUpload(event: any): void {
-    const files = event.target.files;
-    if (files.length > 3) {
-      alert('You can only upload up to 3 images.');
+    const files = Array.from(event.target.files) as File[];
+    if (files.length + this.images.length > 3) {
+      alert('⚠️ You can only upload up to 3 images.');
       return;
     }
-    this.images = Array.from(files);
+    this.images.push(...files);
   }
 
   onPdfUpload(event: any): void {
     const file = event.target.files[0];
     if (file.type !== 'application/pdf') {
-      alert('Only PDF files are allowed.');
+      alert('⚠️ Only PDF files are allowed.');
       return;
     }
     this.pdfFile = file;
   }
 
   submitForm(): void {
-    if (this.workInProgressForm.valid) {
-      const formData = new FormData();
-      formData.append('order', JSON.stringify(this.selectedOrder));
-      formData.append('vehicleId', this.workInProgressForm.value.vehicle);
-      formData.append('userId', this.workInProgressForm.value.user);
-      formData.append('description', this.workInProgressForm.value.description);
+    if (this.workInProgressForm.valid && this.selectedOrder) {
+      this.loading = true;
 
-      this.images.forEach((image) => formData.append('images', image));
+      const formData = new FormData();
+      formData.append('vehicle', this.workInProgressForm.value.vehicle);
+      formData.append('user', this.workInProgressForm.value.user);
+      formData.append('description', this.workInProgressForm.value.description);
+      formData.append('order_number', this.selectedOrder.order_number);
+      formData.append('quote_number', this.selectedOrder.quote_number);
+      formData.append('total_cost', this.selectedOrder.total_cost);
+      formData.append('services', JSON.stringify(this.selectedOrder.services));
+      formData.append('approval_time', this.selectedOrder.approval_time || '');
+
+      this.images.forEach((image, index) => {
+        formData.append(`images`, image);
+      });
+
       if (this.pdfFile) {
-        formData.append('satisfactionNote', this.pdfFile);
+        formData.append('satisfaction_note', this.pdfFile);
       }
 
       this.apiService.submitWorkProgress(formData).subscribe({
         next: () => {
+          console.log('✅ Work progress submitted successfully!');
           alert('✅ Work progress submitted successfully!');
+          this.loading = false;
           this.workInProgressForm.reset();
           this.images = [];
           this.pdfFile = null;
           this.router.navigate(['/orders']);
         },
-        error: (error) => console.error('❌ Error submitting work progress:', error),
+        error: (error) => {
+          console.error('❌ Error submitting work progress:', error);
+          alert('❌ Error submitting work progress. Please try again.');
+          this.loading = false;
+        }
       });
+    } else {
+      alert('⚠️ Please fill in all required fields.');
     }
   }
 }

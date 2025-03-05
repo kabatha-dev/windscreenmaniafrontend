@@ -116,8 +116,9 @@ export class ApiService {
 
 
   submitWorkProgress(formData: FormData): Observable<any> {
-    return this.http.post<any>(`${this.apiUrl}/work-progress/submit/`, formData);
+    return this.http.post(`${this.apiUrl}/work-progress/submit/`, formData);
   }
+  
 
   getOrderDetails(vehicleRegNo: string) {
     return this.http.get(`/api/orders/${vehicleRegNo}`); // Adjust endpoint accordingly

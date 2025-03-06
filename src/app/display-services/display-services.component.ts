@@ -30,7 +30,7 @@ interface WindscreenCustomization {
 @Component({
   selector: 'app-display-services',
   standalone: true,
-  imports: [CommonModule, FormsModule, HeaderComponent, SidebarComponent, FooterComponent],
+  imports: [CommonModule, FormsModule ],
   templateUrl: './display-services.component.html',
   styleUrls: ['./display-services.component.scss'],
 })
@@ -61,6 +61,10 @@ export class DisplayServicesComponent implements OnInit {
     this.fetchServices();
     this.fetchInsuranceProviders();
     this.fetchWindscreenTypes();
+  }
+
+  navigateTo(path: string) {
+    this.router.navigate([path]);
   }
 
   fetchServices() {

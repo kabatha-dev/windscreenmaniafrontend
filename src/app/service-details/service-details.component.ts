@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { ApiService } from '../api.service';
 import { SharedService } from '../services/shared.service';
@@ -16,10 +16,16 @@ interface VehicleModel {
   model: string;
 }
 
+interface vehicle{
+   registration_number: '',
+    year_of_make: ''; 
+  
+}
+
 @Component({
   selector: 'app-service-details',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, ReactiveFormsModule],
   templateUrl: './service-details.component.html',
 })
 export class ServiceDetailsComponent implements OnInit {
@@ -28,16 +34,17 @@ export class ServiceDetailsComponent implements OnInit {
   selectedCustomization: string = '';
   selectedInsuranceProvider: string = '';
   userDetails = { fullName: '', kraPin: '', phone: '' };
-  
   vehicleMakes: VehicleMake[] = [];
   vehicleModels: VehicleModel[] = [];
   windscreenTypes: any[] = [];
+  vehicles: any[] = []; 
+  users: any[] =[]
 
   selectedMake: number | null = null;
   selectedModel: number | null = null;
   isSubmitting = false;
   
-  vehicleData = { registration_number: '', year_of_make: '' }; // Store vehicle details
+  vehicleData = { registration_number: '', year_of_make: '' };
 
   constructor(
     private router: Router,
@@ -49,7 +56,11 @@ export class ServiceDetailsComponent implements OnInit {
     this.loadSavedData();
     this.fetchVehicleMakes();
     this.fetchWindscreenTypes();
-    this.loadVehicleDetails(); // Load vehicle details from SharedService
+    this.fetchVehiclesAndUsers();
+  }
+
+  navigateTo(path: string) {
+    this.router.navigate([path]);
   }
 
   fetchVehicleMakes(): void {
@@ -67,6 +78,7 @@ export class ServiceDetailsComponent implements OnInit {
       }));
     });
   }
+
 
   fetchWindscreenTypes(): void {
     this.apiService.getWindscreenTypes().subscribe(types => {
@@ -92,6 +104,18 @@ export class ServiceDetailsComponent implements OnInit {
     }
   }
 
+  fetchVehiclesAndUsers(): void {
+    this.apiService.getRegisteredVehicles().subscribe({
+      next: (vehicles) => (this.vehicles = vehicles),
+      error: (error) => console.error('Error fetching vehicles:', error),
+    });
+
+    this.apiService.getUserDetails().subscribe({
+      next: (users) => (this.users = users),
+      error: (error) => console.error('Error fetching users:', error),
+    });
+  }
+
   private loadSavedData(): void {
     const savedData = this.sharedService.getServiceData();
     if (savedData) {
@@ -103,12 +127,6 @@ export class ServiceDetailsComponent implements OnInit {
     }
   }
 
-  private loadVehicleDetails(): void {
-    const savedVehicleData = this.sharedService.getVehicleData();
-    if (savedVehicleData) {
-      this.vehicleData = savedVehicleData;
-    }
-  }
 
   submitDetails(): void {
     if (!this.userDetails.fullName || !this.userDetails.kraPin || !this.userDetails.phone) {

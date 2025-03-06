@@ -55,6 +55,10 @@ export class RegisterCarComponent {
     }
   }
 
+  navigateTo(path: string) {
+    this.router.navigate([path]);
+  }
+
   registerCar() {
     if (this.registerForm.valid) {
       const vehicleData = this.registerForm.value;

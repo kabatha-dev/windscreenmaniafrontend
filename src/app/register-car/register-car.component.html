@@ -1,34 +1,84 @@
-<div class="layout-container d-flex flex-column vh-100">
-  <div class="content d-flex justify-content-center align-items-center flex-grow-1">
-    <div class="container card shadow-lg p-4" style="max-width: 500px;">
-      <h2 class="text-center mb-4">Register Your Vehicle</h2>
-      
-      <form [formGroup]="registerForm" (ngSubmit)="registerCar()">
-        <!-- Number Plate -->
-        <div class="mb-3">
-          <label for="registration_number" class="form-label fw-bold">Number Plate</label>
-          <input id="registration_number" class="form-control" formControlName="registration_number" (input)="convertToUppercase()" />
-          
-          <div *ngIf="registerForm.get('registration_number')?.invalid && registerForm.get('registration_number')?.touched" class="text-danger small">
-            <small *ngIf="registerForm.get('registration_number')?.hasError('required')">Number plate is required.</small>
-            <small *ngIf="registerForm.get('registration_number')?.hasError('pattern')">Invalid format. Examples: KAA 123A, UN 123X.</small>
-          </div>
-        </div>
-
-        <!-- Year of Make -->
-        <div class="mb-3">
-          <label for="year_of_make" class="form-label fw-bold">Year of Make</label>
-          <input type="number" id="year_of_make" class="form-control" formControlName="year_of_make" />
-          
-          <div *ngIf="registerForm.get('year_of_make')?.invalid && registerForm.get('year_of_make')?.touched" class="text-danger small">
-            <small *ngIf="registerForm.get('year_of_make')?.hasError('required')">Year of make is required.</small>
-            <small *ngIf="registerForm.get('year_of_make')?.hasError('min')">Year must be at least 2000.</small>
-            <small *ngIf="registerForm.get('year_of_make')?.hasError('max')">Year cannot be later than 2025.</small>
-          </div>
-        </div>
-
-        <button type="submit" class="btn btn-primary w-100" [disabled]="registerForm.invalid">Register Vehicle</button>
-      </form>
+<div class="d-flex flex-column vh-100">
+  
+  <!-- Top Navigation Bar -->
+  <nav class="navbar navbar-expand-lg navbar-light bg-light px-3">
+    <a class="navbar-brand fw-bold" href="#">Windscreen Mania</a>
+    <div class="ms-auto d-flex align-items-center">
+      <!-- Notifications Dropdown -->
+      <div class="dropdown me-3">
+        <button class="btn btn-outline-primary dropdown-toggle" type="button" id="notificationsDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+          🔔 Notifications
+        </button>
+        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="notificationsDropdown">
+          <li><h6 class="dropdown-header">Alerts</h6></li>
+          <li><a class="dropdown-item" routerLink="/quote">📌 New Quotes</a></li>
+          <li><a class="dropdown-item" routerLink="/order">📦 New Orders</a></li>
+          <li><a class="dropdown-item" routerLink="/working-progress">🚧 Work in Progress</a></li>
+          <li><a class="dropdown-item" routerLink="/invoices-pending">📜 Invoices Pending</a></li>
+          <li><a class="dropdown-item" routerLink="/stock-updates">📉 Stock Updates</a></li>
+        </ul>
+      </div>
+      <!-- User Profile Button -->
+      <button class="btn btn-outline-secondary">👤 Profile</button>
     </div>
+  </nav>
+
+  <div class="d-flex flex-grow-1">
+    <!-- Sidebar -->
+    <nav class="bg-primary text-white p-3" style="width: 250px;">
+      <h4 class="text-center">Dashboard</h4>
+      <ul class="nav flex-column">
+        <li class="nav-item"><a class="nav-link text-white" (click)="navigateTo('/')">🏠 Dashboard</a></li>
+        <li class="nav-item"><a class="nav-link text-white" (click)="navigateTo('order')">📦 Orders</a></li>
+        <li class="nav-item"><a class="nav-link text-white" (click)="navigateTo('/quote')">📌 Quotes</a></li>
+        <li class="nav-item"><a class="nav-link text-white" (click)="navigateTo('/statement-of-accounts')">📜 Reports</a></li>
+        <li class="nav-item"><a class="nav-link text-white" (click)="navigateTo('/display-services')">📉 Stock Management</a></li>
+      </ul>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="container-fluid p-4">
+      <h2 class="mb-4">Windscreen Mania</h2>
+      <!-- Action Buttons -->
+      <div class="d-flex gap-3 mb-4">
+        <button class="btn btn-success">➕ New Order</button>
+        <button class="btn btn-info">📝 New Quote</button>
+        <button class="btn btn-warning">📑 New Invoice</button>
+        <button class="btn btn-danger">🚀 Work Progress</button>
+        <button class="btn btn-primary">📋 Available Stock</button>
+        <button class="btn btn-dark">➕ Add New Stock</button>
+      </div>
+      
+      <!-- Vehicle Registration Form -->
+      <div class="content d-flex justify-content-center align-items-center flex-grow-1">
+        <div class="container card shadow-lg p-4" style="max-width: 500px;">
+          <h2 class="text-center mb-4">Register Your Vehicle</h2>
+          <form [formGroup]="registerForm" (ngSubmit)="registerCar()">
+            <!-- Number Plate -->
+            <div class="mb-3">
+              <label for="registration_number" class="form-label fw-bold">Number Plate</label>
+              <input id="registration_number" class="form-control" formControlName="registration_number" (input)="convertToUppercase()" />
+              <div *ngIf="registerForm.get('registration_number')?.invalid && registerForm.get('registration_number')?.touched" class="text-danger small">
+                <small *ngIf="registerForm.get('registration_number')?.hasError('required')">Number plate is required.</small>
+                <small *ngIf="registerForm.get('registration_number')?.hasError('pattern')">Invalid format. Examples: KAA 123A, UN 123X.</small>
+              </div>
+            </div>
+            
+            <!-- Year of Make -->
+            <div class="mb-3">
+              <label for="year_of_make" class="form-label fw-bold">Year of Make</label>
+              <input type="number" id="year_of_make" class="form-control" formControlName="year_of_make" />
+              <div *ngIf="registerForm.get('year_of_make')?.invalid && registerForm.get('year_of_make')?.touched" class="text-danger small">
+                <small *ngIf="registerForm.get('year_of_make')?.hasError('required')">Year of make is required.</small>
+                <small *ngIf="registerForm.get('year_of_make')?.hasError('min')">Year must be at least 2000.</small>
+                <small *ngIf="registerForm.get('year_of_make')?.hasError('max')">Year cannot be later than 2025.</small>
+              </div>
+            </div>
+            
+            <button type="submit" class="btn btn-primary w-100" [disabled]="registerForm.invalid">Register Vehicle</button>
+          </form>
+        </div>
+      </div>
+    </main>
   </div>
 </div>

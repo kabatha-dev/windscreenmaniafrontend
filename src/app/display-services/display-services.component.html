@@ -1,116 +1,167 @@
-<div>
-<app-header></app-header>
-<app-sidebar></app-sidebar>
-<div class="container mx-auto max-w-lg p-6 bg-white shadow-lg rounded-lg">
-  <h2 class="text-2xl font-bold mb-4 text-center">Select Services</h2>
-
-  <form (ngSubmit)="selectServices()" class="space-y-4">
-    <!-- Services List -->
-    <div *ngFor="let service of services" class="flex items-center space-x-2">
-      <input 
-        type="checkbox" 
-        [(ngModel)]="service.selected" 
-        [name]="service.name" 
-        class="w-4 h-4"
-        (change)="updateWindscreenStatus()"
-      />
-      <label class="text-sm">{{ service.name | titlecase }}</label>
+<div class="d-flex flex-column vh-100">
+  
+  <!-- Top Navigation Bar -->
+  <nav class="navbar navbar-expand-lg navbar-light bg-light px-3">
+    <a class="navbar-brand fw-bold" href="#">Windscreen Mania</a>
+    <div class="ms-auto d-flex align-items-center">
+      <!-- Notifications Dropdown -->
+      <div class="dropdown me-3">
+        <button class="btn btn-outline-primary dropdown-toggle" type="button" id="notificationsDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+          🔔 Notifications
+        </button>
+        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="notificationsDropdown">
+          <li><h6 class="dropdown-header">Alerts</h6></li>
+          <li><a class="dropdown-item" routerLink="/quote">📌 New Quotes</a></li>
+          <li><a class="dropdown-item" routerLink="/order">📦 New Orders</a></li>
+          <li><a class="dropdown-item" routerLink="/working-progress">🚧 Work in Progress</a></li>
+          <li><a class="dropdown-item" routerLink="/invoices-pending">📜 Invoices Pending</a></li>
+          <li><a class="dropdown-item" routerLink="/stock-updates">📉 Stock Updates</a></li>
+        </ul>
+      </div>
+      <!-- User Profile Button -->
+      <button class="btn btn-outline-secondary">👤 Profile</button>
     </div>
+  </nav>
 
-    <!-- Windscreen Details -->
-    <div *ngIf="hasWindscreenReplacement" class="mt-4 p-4 border border-gray-300 rounded">
-      <h3 class="text-lg font-semibold mb-2">Windscreen Details</h3>
+  <div class="d-flex flex-grow-1">
+    <!-- Sidebar -->
+    <nav class="bg-primary text-white p-3" style="width: 250px;">
+      <h4 class="text-center">Dashboard</h4>
+      <ul class="nav flex-column">
+        <li class="nav-item"><a class="nav-link text-white" (click)="navigateTo('/')">🏠 Dashboard</a></li>
+        <li class="nav-item"><a class="nav-link text-white" (click)="navigateTo('order')">📦 Orders</a></li>
+        <li class="nav-item"><a class="nav-link text-white" (click)="navigateTo('/quote')">📌 Quotes</a></li>
+        <li class="nav-item"><a class="nav-link text-white" (click)="navigateTo('/statement-of-accounts')">📜 Reports</a></li>
+        <li class="nav-item"><a class="nav-link text-white" (click)="navigateTo('/display-services')">📉 Stock Management</a></li>
+      </ul>
+    </nav>
 
-      <!-- Windscreen Type -->
-      <label class="block text-sm font-medium">Windscreen Type:</label>
-      <select 
-        [(ngModel)]="selectedWindscreenType" 
-        name="selectedWindscreenType" 
-        class="w-full p-2 border rounded"
-        (change)="onWindscreenTypeChange()"
-      >
-        <option value="" disabled selected>Select a type</option>
-        <option *ngFor="let type of windscreenTypes" [value]="type.id">
-          {{ type.name }}
-        </option>
-      </select>
+    <!-- Main Content -->
+    <main class="container-fluid p-4">
+      <h2 class="mb-4">Windscreen Mania</h2>
 
-      <!-- Windscreen Customizations -->
-      <label class="block text-sm font-medium mt-2">Customizations:</label>
-      <select 
-        [(ngModel)]="selectedCustomization" 
-        name="selectedCustomization" 
-        class="w-full p-2 border rounded"
-        [disabled]="!windscreenCustomizations.length"
-      >
-        <option value="" disabled selected>Select a customization</option>
-        <option *ngFor="let customization of windscreenCustomizations" [value]="customization.id">
-          {{ customization.name }} <!-- ✅ Now correctly maps to customization_details -->
-        </option>
-      </select>
-    </div>
+      <!-- Action Buttons -->
+      <div class="d-flex gap-3 mb-4">
+        <button class="btn btn-secondary">➕ New Order</button>
+        <button class="btn btn-info">📝 New Quote</button>
+        <button class="btn btn-warning">📑 New Invoice</button>
+        <button class="btn btn-danger">🚀 Work Progress</button>
+        <button class="btn btn-primary">📋 Available Stock</button>
+        <button class="btn btn-dark">➕ Add New Stock</button>
+      </div>
 
-    <!-- Insurance Details -->
-    <div *ngIf="hasWindscreenReplacement" class="mt-4 p-4 border border-gray-300 rounded">
-      <h3 class="text-lg font-semibold mb-2">Insurance Details</h3>
+      <!-- Service Selection Form -->
+      <div class="container mx-auto max-w-lg p-6 bg-white shadow-lg rounded-lg">
+        <h2 class="text-2xl font-bold mb-4 text-center">Select Services</h2>
 
-      <!-- Insurance Provider -->
-      <label class="block text-sm font-medium">Insurance Provider:</label>
-      <select 
-        [(ngModel)]="selectedInsurance" 
-        name="selectedInsurance" 
-        class="w-full p-2 border rounded"
-      >
-        <option value="" disabled selected>Select a provider</option>
-        <option *ngFor="let provider of insuranceProviders" [value]="provider.name">
-          {{ provider.name }}
-        </option>
-      </select>
+        <form (ngSubmit)="selectServices()" class="space-y-4">
+          <!-- Services List -->
+          <div *ngFor="let service of services" class="d-flex align-items-center">
+            <input 
+              type="checkbox" 
+              [(ngModel)]="service.selected" 
+              [name]="service.name" 
+              class="form-check-input"
+              (change)="updateWindscreenStatus()"
+            />
+            <label class="ms-2">{{ service.name | titlecase }}</label>
+          </div>
 
-         <!-- Full Name -->
-         <div class="mb-3">
-          <label class="block text-sm font-medium mb-1">Full Name:</label>
-          <input 
-            type="text" 
-            [(ngModel)]="userDetails.fullName" 
-            name="fullName" 
-            class="w-full p-2 border rounded" 
-            placeholder="Enter your full name"
-            required
-          />
-        </div>
+          <!-- Windscreen Details -->
+          <div *ngIf="hasWindscreenReplacement" class="mt-4 p-4 border border-gray-300 rounded">
+            <h3 class="text-lg font-semibold mb-2">Windscreen Details</h3>
 
-      <!-- KRA PIN -->
-      <label class="block text-sm font-medium mt-2">KRA PIN:</label>
-      <input 
-        type="text" 
-        [(ngModel)]="userDetails.kraPin" 
-        name="kraPin" 
-        class="w-full p-2 border rounded" 
-        placeholder="Enter KRA PIN"
-      />
-      
+            <!-- Windscreen Type -->
+            <label class="form-label">Windscreen Type:</label>
+            <select 
+              [(ngModel)]="selectedWindscreenType" 
+              name="selectedWindscreenType" 
+              class="form-select"
+              (change)="onWindscreenTypeChange()"
+            >
+              <option value="" disabled selected>Select a type</option>
+              <option *ngFor="let type of windscreenTypes" [value]="type.id">
+                {{ type.name }}
+              </option>
+            </select>
 
-      <!-- Phone Number -->
-      <label class="block text-sm font-medium mt-2">Phone Number:</label>
-      <input 
-        type="text" 
-        [(ngModel)]="userDetails.phone" 
-        name="phone" 
-        class="w-full p-2 border rounded" 
-        placeholder="Enter Phone Number"
-      />
-    </div>
+            <!-- Windscreen Customizations -->
+            <label class="form-label mt-2">Customizations:</label>
+            <select 
+              [(ngModel)]="selectedCustomization" 
+              name="selectedCustomization" 
+              class="form-select"
+              [disabled]="!windscreenCustomizations.length"
+            >
+              <option value="" disabled selected>Select a customization</option>
+              <option *ngFor="let customization of windscreenCustomizations" [value]="customization.id">
+                {{ customization.name }}
+              </option>
+            </select>
+          </div>
 
-    <!-- Submit Button -->
-  <!-- Submit Button -->
-<button 
-type="submit" 
-[disabled]="isServiceSelected() === false">
-Submit Services
-</button>
+          <!-- Insurance Details -->
+          <div *ngIf="hasWindscreenReplacement" class="mt-4 p-4 border border-gray-300 rounded">
+            <h3 class="text-lg font-semibold mb-2">Insurance Details</h3>
 
-  </form>
-</div>
-<app-footer></app-footer>
+            <!-- Insurance Provider -->
+            <label class="form-label">Insurance Provider:</label>
+            <select 
+              [(ngModel)]="selectedInsurance" 
+              name="selectedInsurance" 
+              class="form-select"
+            >
+              <option value="" disabled selected>Select a provider</option>
+              <option *ngFor="let provider of insuranceProviders" [value]="provider.name">
+                {{ provider.name }}
+              </option>
+            </select>
+
+            <!-- Full Name -->
+            <div class="mb-3">
+              <label class="form-label">Full Name:</label>
+              <input 
+                type="text" 
+                [(ngModel)]="userDetails.fullName" 
+                name="fullName" 
+                class="form-control" 
+                placeholder="Enter your full name"
+                required
+              />
+            </div>
+
+            <!-- KRA PIN -->
+            <label class="form-label mt-2">KRA PIN:</label>
+            <input 
+              type="text" 
+              [(ngModel)]="userDetails.kraPin" 
+              name="kraPin" 
+              class="form-control" 
+              placeholder="Enter KRA PIN"
+            />
+
+            <!-- Phone Number -->
+            <label class="form-label mt-2">Phone Number:</label>
+            <input 
+              type="text" 
+              [(ngModel)]="userDetails.phone" 
+              name="phone" 
+              class="form-control" 
+              placeholder="Enter Phone Number"
+            />
+          </div>
+
+          <!-- Submit Button -->
+          <button 
+            type="submit" 
+            class="btn btn-primary mt-3"
+            [disabled]="isServiceSelected() === false"
+          >
+            Submit Services
+          </button>
+        </form>
+      </div>
+
+    </main>
+  </div>
 </div>

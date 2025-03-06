@@ -9,7 +9,7 @@ import { SharedService } from '../services/shared.service';
 @Component({
   selector: 'app-working-progress',
   standalone: true,
-  imports: [ReactiveFormsModule, NgIf, NgFor],
+  imports: [ReactiveFormsModule, NgIf],
   templateUrl: './working-progress.component.html',
   styleUrls: ['./working-progress.component.css'],
 })
@@ -44,21 +44,14 @@ export class WorkingProgressComponent implements OnInit {
       return;
     }
     
-    console.log('✅ Selected Order:', this.selectedOrder);
-    this.fetchVehiclesAndUsers();
   }
 
-  fetchVehiclesAndUsers(): void {
-    this.apiService.getRegisteredVehicles().subscribe({
-      next: (vehicles) => (this.vehicles = vehicles),
-      error: (error) => console.error('Error fetching vehicles:', error),
-    });
 
-    this.apiService.getUserDetails().subscribe({
-      next: (users) => (this.users = users),
-      error: (error) => console.error('Error fetching users:', error),
-    });
+  
+  navigateTo(path: string) {
+    this.router.navigate([path]);
   }
+
 
   getServicesList(): string {
     if (this.selectedOrder && Array.isArray(this.selectedOrder.services)) {
@@ -90,9 +83,6 @@ export class WorkingProgressComponent implements OnInit {
       this.loading = true;
 
       const formData = new FormData();
-      formData.append('vehicle', this.workInProgressForm.value.vehicle);
-      formData.append('user', this.workInProgressForm.value.user);
-      formData.append('description', this.workInProgressForm.value.description);
       formData.append('order_number', this.selectedOrder.order_number);
       formData.append('quote_number', this.selectedOrder.quote_number);
       formData.append('total_cost', this.selectedOrder.total_cost);

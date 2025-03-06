@@ -1,60 +1,99 @@
-<div class="container">
-  <h2>Work in Progress</h2>
-
-  <div *ngIf="selectedOrder">
-    <h3>Create Work Progress for Order #{{ selectedOrder.order_number }}</h3>
-
-    <table>
-      <tr>
-        <th>Order Number</th>
-        <th>Quote Number</th>
-        <th>Services</th>
-        <th>Total Cost</th>
-        <th>Approval Time</th>
-      </tr>
-      <tr>
-        <td>{{ selectedOrder.order_number }}</td>
-        <td>{{ selectedOrder.quote_number }}</td>
-        <td>{{ getServicesList() }}</td>
-        <td>{{ selectedOrder.total_cost }}</td>
-        <td>{{ selectedOrder.approval_time || 'N/A' }}</td>
-      </tr>
-    </table>
-    
-    <form [formGroup]="workInProgressForm" (ngSubmit)="submitForm()">
-      <div>
-        <label for="vehicle">Select Vehicle</label>
-        <select formControlName="vehicle" id="vehicle">
-          <option *ngFor="let vehicle of vehicles" [value]="vehicle.id">
-            {{ vehicle.registration_number || 'Unknown Vehicle' }}
-          </option>
-        </select>
+<div class="d-flex flex-column vh-100">
+  
+  <!-- Top Navigation Bar -->
+  <nav class="navbar navbar-expand-lg navbar-light bg-light px-3">
+    <a class="navbar-brand fw-bold" href="#">Windscreen Mania</a>
+    <div class="ms-auto d-flex align-items-center">
+      <div class="dropdown me-3">
+        <button class="btn btn-outline-primary dropdown-toggle" type="button" id="notificationsDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+          🔔 Notifications
+        </button>
+        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="notificationsDropdown">
+          <li><h6 class="dropdown-header">Alerts</h6></li>
+          <li><a class="dropdown-item" routerLink="/quote">📌 New Quotes</a></li>
+          <li><a class="dropdown-item" routerLink="/order">📦 New Orders</a></li>
+          <li><a class="dropdown-item" routerLink="/working-progress">🚧 Work in Progress</a></li>
+          <li><a class="dropdown-item" routerLink="/invoices-pending">📜 Invoices Pending</a></li>
+          <li><a class="dropdown-item" routerLink="/stock-updates">📉 Stock Updates</a></li>
+        </ul>
       </div>
+      <button class="btn btn-outline-secondary">👤 Profile</button>
+    </div>
+  </nav>
 
-      <div>
-        <label for="user">Select User</label>
-        <select formControlName="user" id="user">
-          <option *ngFor="let user of users" [value]="user.id">{{ user.full_name }}</option>
-        </select>
+  <div class="d-flex flex-grow-1">
+    <!-- Sidebar -->
+    <nav class="bg-primary text-white p-3 sidebar">
+      <h4 class="text-center">Dashboard</h4>
+      <ul class="nav flex-column">
+        <li class="nav-item"><a class="nav-link text-white" (click)="navigateTo('/')">🏠 Dashboard</a></li>
+        <li class="nav-item"><a class="nav-link text-white" (click)="navigateTo('order')">📦 Orders</a></li>
+        <li class="nav-item"><a class="nav-link text-white" (click)="navigateTo('/quote')">📌 Quotes</a></li>
+        <li class="nav-item"><a class="nav-link text-white" (click)="navigateTo('/statement-of-accounts')">📜 Reports</a></li>
+        <li class="nav-item"><a class="nav-link text-white" (click)="navigateTo('/display-services')">📉 Stock Management</a></li>
+      </ul>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="container-fluid p-4">
+      <h2 class="mb-4">Windscreen Mania</h2>
+      
+      <!-- Action Buttons -->
+      <div class="d-flex gap-3 mb-4">
+        <button class="btn btn-success">➕ New Order</button>
+        <button class="btn btn-info">📝 New Quote</button>
+        <button class="btn btn-warning">📑 New Invoice</button>
+        <button class="btn btn-danger">🚀 Work Progress</button>
+        <button class="btn btn-primary">📋 Available Stock</button>
+        <button class="btn btn-dark">➕ Add New Stock</button>
       </div>
-
-      <div>
-        <label>Upload Images (Max 3)</label>
-        <input type="file" (change)="onImageUpload($event)" multiple accept="image/*" />
+      
+      <!-- Work in Progress Section -->
+      <div class="container">
+        <h2>Work in Progress</h2>
+        <div *ngIf="selectedOrder">
+          <h3>Create Work Progress for Order #{{ selectedOrder.order_number }}</h3>
+          <table class="table table-bordered">
+            <thead>
+              <tr>
+                <th>Order Number</th>
+                <th>Quote Number</th>
+                <th>Services</th>
+                <th>Total Cost</th>
+                <th>Approval Time</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>{{ selectedOrder.order_number }}</td>
+                <td>{{ selectedOrder.quote_number }}</td>
+                <td>{{ getServicesList() }}</td>
+                <td>{{ selectedOrder.total_cost }}</td>
+                <td>{{ selectedOrder.approval_time || 'N/A' }}</td>
+              </tr>
+            </tbody>
+          </table>
+          
+          <form [formGroup]="workInProgressForm" (ngSubmit)="submitForm()">
+          
+              <label>Upload Images (Max 3)</label>
+              <input type="file" (change)="onImageUpload($event)" multiple accept="image/*" />
+          
+            <div>
+              <label>Upload Satisfaction Note (PDF)</label>
+              <input type="file" (change)="onPdfUpload($event)" accept="application/pdf" />
+            </div>
+            <button type="submit" [disabled]="workInProgressForm.invalid || loading">
+              {{ loading ? 'Loading...' : 'Submit' }}
+            </button>
+          </form>
+        </div>
+        <div *ngIf="!selectedOrder">
+          <p>No order details available.</p>
+        </div>
       </div>
-
-      <div>
-        <label>Upload Satisfaction Note (PDF)</label>
-        <input type="file" (change)="onPdfUpload($event)" accept="application/pdf" />
-      </div>
-
-      <button type="submit" [disabled]="workInProgressForm.invalid || loading">
-        {{ loading ? 'Loading...' : 'Submit' }}
-      </button>
-    </form>
-  </div>
-
-  <div *ngIf="!selectedOrder">
-    <p>No order details available.</p>
+    </main>
   </div>
 </div>
+
+

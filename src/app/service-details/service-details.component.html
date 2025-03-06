@@ -22,6 +22,22 @@
             </option>
           </select>
         </div>
+        <div>
+          <label for="vehicle">Select Vehicle</label>
+          <select formControlName="vehicle" id="vehicle">
+            <option *ngFor="let vehicle of vehicles" [value]="vehicle.id">
+              {{ vehicle.registration_number || 'Unknown Vehicle' }}
+            </option>
+          </select>
+        </div>
+  
+        <div>
+          <label for="user">Select User</label>
+          <select formControlName="user" id="user">
+            <option *ngFor="let user of users" [value]="user.id">{{ user.full_name }}</option>
+          </select>
+        </div>
+
 
         <!-- Submit Button -->
         <button 

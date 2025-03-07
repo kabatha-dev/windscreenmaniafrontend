@@ -77,6 +77,57 @@
             
             <button type="submit" class="btn btn-primary w-100" [disabled]="registerForm.invalid">Register Vehicle</button>
           </form>
+
+
+          <!-- Vehicle Registration Form -->
+<div class="content d-flex justify-content-center align-items-center flex-grow-1">
+  <div class="container card shadow-lg p-4" style="max-width: 500px;">
+    <h2 class="text-center mb-4">Register Your Vehicle</h2>
+    <form [formGroup]="registerForm" (ngSubmit)="registerCar()">
+      <!-- Full Name -->
+      <div class="mb-3">
+        <label for="full_name" class="form-label fw-bold">Full Name</label>
+        <input id="full_name" class="form-control" formControlName="full_name" />
+        <div *ngIf="registerForm.get('full_name')?.invalid && registerForm.get('full_name')?.touched" class="text-danger small">
+          <small *ngIf="registerForm.get('full_name')?.hasError('required')">Full name is required.</small>
+        </div>
+      </div>
+
+      <!-- KRA PIN -->
+      <div class="mb-3">
+        <label for="kra_pin" class="form-label fw-bold">KRA PIN</label>
+        <input id="kra_pin" class="form-control" formControlName="kra_pin" />
+        <div *ngIf="registerForm.get('kra_pin')?.invalid && registerForm.get('kra_pin')?.touched" class="text-danger small">
+          <small *ngIf="registerForm.get('kra_pin')?.hasError('required')">KRA PIN is required.</small>
+        </div>
+      </div>
+
+      <!-- Phone Number -->
+      <div class="mb-3">
+        <label for="phone" class="form-label fw-bold">Phone Number</label>
+        <input id="phone" class="form-control" formControlName="phone" type="tel" />
+        <div *ngIf="registerForm.get('phone')?.invalid && registerForm.get('phone')?.touched" class="text-danger small">
+          <small *ngIf="registerForm.get('phone')?.hasError('required')">Phone number is required.</small>
+        </div>
+      </div>
+
+      <!-- Number Plate -->
+      <div class="mb-3">
+        <label for="registration_number" class="form-label fw-bold">Number Plate</label>
+        <input id="registration_number" class="form-control" formControlName="registration_number" (input)="convertToUppercase()" />
+      </div>
+
+      <!-- Year of Make -->
+      <div class="mb-3">
+        <label for="year_of_make" class="form-label fw-bold">Year of Make</label>
+        <input type="number" id="year_of_make" class="form-control" formControlName="year_of_make" />
+      </div>
+
+      <button type="submit" class="btn btn-primary w-100" [disabled]="registerForm.invalid">Register Vehicle</button>
+    </form>
+  </div>
+</div>
+
         </div>
       </div>
     </main>

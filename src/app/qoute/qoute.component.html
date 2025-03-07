@@ -3,6 +3,9 @@
 
   <div *ngIf="submittedQuote" class="quote-box">
     <p><strong>Quote Number:</strong> {{ submittedQuote.quote_number }}</p>
+    <!-- <p><strong>Vehicle:</strong> <span [innerHTML]="getVehicleName(submittedQuote.vehicle)"></span></p> -->
+    <p><strong>Windscreen Type:</strong> {{ getWindscreenTypeName(submittedQuote.windscreen_type) }}</p>
+    <p><strong>Windscreen Customization:</strong> {{ getCustomizationName(submittedQuote.windscreen_customization) }}</p>
     <p><strong>Status:</strong> <span [class]="submittedQuote.status.toLowerCase()">{{ submittedQuote.status }}</span></p>
     <p><strong>Services:</strong> {{ getServiceNames(submittedQuote.services) }}</p>
     <p><strong>Total Cost:</strong> Ksh {{ submittedQuote.total_cost }}</p>
@@ -18,6 +21,9 @@
     <thead>
       <tr>
         <th>Quote Number</th>
+        <th>Vehicle</th>
+        <th>Windscreen Type</th>
+        <th>Windscreen Customization</th>
         <th>Status</th>
         <th>Services</th>
         <th>Total Cost</th>
@@ -27,6 +33,9 @@
     <tbody>
       <tr *ngFor="let quote of allQuotes">
         <td>{{ quote.quote_number }}</td>
+        <td [innerHTML]="getVehicleName(quote.vehicle)"></td>
+        <td>{{ getWindscreenTypeName(quote.windscreen_type) }}</td>
+        <td>{{ getCustomizationName(quote.windscreen_customization) }}</td>
         <td><span [class]="quote.status.toLowerCase()">{{ quote.status }}</span></td>
         <td>{{ getServiceNames(quote.services) }}</td>
         <td>Ksh {{ quote.total_cost }}</td>

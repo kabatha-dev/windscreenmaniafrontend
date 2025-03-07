@@ -1,0 +1,87 @@
+<div class="max-w-3xl mx-auto p-6 bg-white shadow-md rounded-lg">
+    <h2 class="text-2xl font-semibold mb-4">Vehicle Service Registration</h2>
+  
+    <form [formGroup]="vehicleForm" (ngSubmit)="registerVehicle()">
+      <!-- Registration Number -->
+      <div class="mb-4">
+        <label class="block font-medium">Registration Number</label>
+        <input type="text" formControlName="registration_number" class="w-full p-2 border rounded" />
+        <div *ngIf="vehicleForm.get('registration_number')?.invalid && vehicleForm.get('registration_number')?.touched" class="text-red-500">
+          Invalid registration number
+        </div>
+      </div>
+  
+      <!-- Year of Make -->
+      <div class="mb-4">
+        <label class="block font-medium">Year of Make</label>
+        <input type="number" formControlName="year_of_make" class="w-full p-2 border rounded" />
+      </div>
+  
+      <!-- Make -->
+      <div class="mb-4">
+        <label class="block font-medium">Make</label>
+        <select formControlName="make" (change)="onMakeChange()" class="w-full p-2 border rounded">
+          <option *ngFor="let make of vehicleMakes" [value]="make.id">{{ make.name }}</option>
+        </select>
+      </div>
+  
+      <!-- Model -->
+      <div class="mb-4">
+        <label class="block font-medium">Model</label>
+        <select formControlName="model" class="w-full p-2 border rounded">
+          <option *ngFor="let model of vehicleModels" [value]="model.id">{{ model.name }}</option>
+        </select>
+      </div>
+  
+      <!-- Full Name -->
+      <div class="mb-4">
+        <label class="block font-medium">Full Name</label>
+        <input type="text" formControlName="fullName" class="w-full p-2 border rounded" />
+      </div>
+  
+      <!-- KRA PIN -->
+      <div class="mb-4">
+        <label class="block font-medium">KRA PIN</label>
+        <input type="text" formControlName="kraPin" class="w-full p-2 border rounded" />
+      </div>
+  
+      <!-- Phone Number -->
+      <div class="mb-4">
+        <label class="block font-medium">Phone Number</label>
+        <input type="text" formControlName="phone" class="w-full p-2 border rounded" />
+      </div>
+  
+      <!-- Services -->
+      <div class="mb-4">
+        <label class="block font-medium">Select Services</label>
+        <div *ngFor="let service of services">
+          <input type="checkbox" [checked]="service.selected" (change)="updateWindscreenStatus()" />
+          <span>{{ service.name }} - {{ service.cost }}</span>
+        </div>
+      </div>
+  
+      <!-- Windscreen Type -->
+      <div class="mb-4" *ngIf="hasWindscreenReplacement">
+        <label class="block font-medium">Windscreen Type</label>
+        <select formControlName="windscreenType" (change)="onWindscreenTypeChange()" class="w-full p-2 border rounded">
+          <option *ngFor="let type of windscreenTypes" [value]="type.id">{{ type.name }}</option>
+        </select>
+      </div>
+  
+      <!-- Windscreen Customization -->
+      <div class="mb-4" *ngIf="windscreenCustomizations.length > 0">
+        <label class="block font-medium">Windscreen Customization</label>
+        <select formControlName="windscreenCustomization" class="w-full p-2 border rounded">
+          <option *ngFor="let customization of windscreenCustomizations" [value]="customization.id">
+            {{ customization.name }}
+          </option>
+        </select>
+      </div>
+  
+      <!-- Submit Button -->
+      <button type="submit" class="w-full bg-blue-500 text-white p-2 rounded" [disabled]="vehicleForm.invalid">
+        Register Vehicle
+      </button>
+    </form>
+  </div>
+  

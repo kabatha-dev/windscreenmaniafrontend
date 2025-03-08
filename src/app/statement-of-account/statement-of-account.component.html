@@ -1,1 +1,6 @@
-<p>statement-of-account works!</p>
+<h2>Statement of Account</h2>
+<ul>
+  <li *ngFor="let statement of statements">
+    Date: {{ statement.date }}, Amount: {{ statement.amount }}, Description: {{ statement.description }}
+  </li>
+</ul>

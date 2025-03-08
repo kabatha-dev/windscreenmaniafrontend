@@ -1,0 +1,33 @@
+/* Statement of Account Styles */
+h2 {
+    text-align: center;
+    font-size: 24px;
+    margin-bottom: 20px;
+    color: #333;
+  }
+  
+  ul {
+    list-style: none;
+    padding: 0;
+    max-width: 600px;
+    margin: 0 auto;
+  }
+  
+  li {
+    background: #f8f9fa;
+    padding: 15px;
+    margin-bottom: 10px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    font-size: 16px;
+  }
+  
+  li:nth-child(odd) {
+    background: #e9ecef;
+  }
+  
+  li span {
+    font-weight: bold;
+    color: #007bff;
+  }
+  

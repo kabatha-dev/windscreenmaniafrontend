@@ -4,6 +4,9 @@
   <div *ngIf="submittedQuote" class="quote-box">
     <p><strong>Quote Number:</strong> {{ submittedQuote.quote_number }}</p>
     <p><strong>Status:</strong> <span [class]="submittedQuote.status.toLowerCase()">{{ submittedQuote.status }}</span></p>
+    <p><strong>Registration Number:</strong> {{ submittedQuote.vehicle.registration_number }}</p>
+    <p><strong>Make:</strong> {{ submittedQuote.vehicle.make }}</p>
+    <p><strong>Model:</strong> {{ submittedQuote.vehicle.model }}</p>
     <p><strong>Services:</strong> {{ getServiceNames(submittedQuote.services) }}</p>
     <p><strong>Total Cost:</strong> Ksh {{ submittedQuote.total_cost }}</p>
 
@@ -19,6 +22,9 @@
       <tr>
         <th>Quote Number</th>
         <th>Status</th>
+        <th>Registration Number</th>
+        <th>Make</th>
+        <th>Model</th>
         <th>Services</th>
         <th>Total Cost</th>
         <th>Action</th>
@@ -28,6 +34,9 @@
       <tr *ngFor="let quote of allQuotes">
         <td>{{ quote.quote_number }}</td>
         <td><span [class]="quote.status.toLowerCase()">{{ quote.status }}</span></td>
+        <td>{{ quote.vehicle.registration_number }}</td>
+        <td>{{ quote.vehicle.make }}</td>
+        <td>{{ quote.vehicle.model }}</td>
         <td>{{ getServiceNames(quote.services) }}</td>
         <td>Ksh {{ quote.total_cost }}</td>
         <td>

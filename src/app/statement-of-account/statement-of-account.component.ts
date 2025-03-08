@@ -1,23 +1,31 @@
-import { Component } from '@angular/core';
-import { ApiService } from '../api.service';
-import {HttpClientModule} from '@angular/common/http';
+import { Component, OnInit } from '@angular/core';
+import { StatementOfAccountService } from '../services/statement-of-account.service';
+import { NgFor } from '@angular/common'; // Import NgFor
 
 @Component({
   selector: 'app-statement-of-account',
   standalone: true,
-  imports: [HttpClientModule],  // Ensure HttpClientModule is imported
+  imports: [NgFor], // Add NgFor here
   templateUrl: './statement-of-account.component.html',
-  styleUrls: ['./statement-of-account.component.scss'],
+  styleUrls: ['./statement-of-account.component.scss']
 })
-export class StatementOfAccountComponent {
-  statement: any;
+export class StatementOfAccountComponent implements OnInit {
+  statements: any[] = [];
 
-  constructor(private apiService: ApiService) {}
+  constructor(private statementService: StatementOfAccountService) {}
 
-  ngOnInit() {
-    // @ts-ignore
-    this.apiService.getStatementOfAccount().subscribe((response) => {
-      this.statement = response;
-    });
+  ngOnInit(): void {
+    this.fetchStatements();
+  }
+
+  fetchStatements(): void {
+    this.statementService.getStatements().subscribe(
+      (data: any) => {
+        this.statements = data;
+      },
+      (error: any) => {
+        console.error('Error fetching statements:', error);
+      }
+    );
   }
 }

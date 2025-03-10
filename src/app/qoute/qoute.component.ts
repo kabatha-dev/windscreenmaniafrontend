@@ -34,13 +34,14 @@ export class QuoteComponent implements OnInit {
   fetchQuotes(): void {
     this.apiService.getQuotes().subscribe({
       next: (quotes: any[]) => {
-        console.log('Fetched Quotes:', quotes); // Debugging line
+        console.log('Fetched Quotes:', JSON.stringify(quotes, null, 2)); // Pretty print
         this.allQuotes = quotes.filter(q => q.status !== 'Rejected');
         this.submittedQuote = this.allQuotes.length > 0 ? this.allQuotes[0] : null;
       },
       error: (error: any) => console.error('Error fetching quotes:', error)
     });
   }
+  
 
   fetchServiceDetails(): void {
     this.apiService.getServices().subscribe({
@@ -96,16 +97,23 @@ export class QuoteComponent implements OnInit {
     });
   }
 
-  getServiceNames(serviceIds: number[]): string {
-    return serviceIds.map(id => this.serviceDetails[id] || `Service ${id}`).join(', ');
+  getServiceNames(services: { id: number }[]): string {
+    return services.map(service => this.serviceDetails[service.id] || `Service ${service.id}`).join(', ');
   }
 
-  getVehicleName(vehicleId: number | undefined): string {
-    if (!vehicleId || !this.vehicleDetails[vehicleId]) return 'Unknown Vehicle';
-
-    const vehicle = this.vehicleDetails[vehicleId];
-    return `${vehicle.make} ${vehicle.model} <strong>(${vehicle.registration_number})</strong>`;
+  getVehicleName(vehicle: any): string {
+    if (!vehicle) return 'Unknown Vehicle';
+  
+    console.log("Vehicle Data:", vehicle); // Debugging
+  
+    const make = vehicle.make || 'Unknown';
+    const model = vehicle.vehicle_model?.name || 'Unknown';  // Fix this line
+    const regNo = vehicle.registration_number || 'No Reg Number';
+  
+    return `${make} ${model} <strong>(${regNo})</strong>`;
   }
+  
+  
 
   getWindscreenTypeName(typeId: number): string {
     return this.windscreenTypes[typeId] || `Type ${typeId}`;

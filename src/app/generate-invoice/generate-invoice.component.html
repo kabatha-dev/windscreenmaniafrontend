@@ -1,1 +1,20 @@
-<p>generate-invoice works!</p>
+<h2>Invoices</h2>
+<ul>
+  <li *ngFor="let invoice of invoices">
+    <p><strong>Invoice Number:</strong> {{ invoice.invoice_number }}</p>
+    <p><strong>Customer Name:</strong> {{ invoice.customer_name }}</p>
+    <p><strong>Vehicle Registration:</strong> {{ invoice.vehicle_registration }}</p>
+    <p><strong>Make:</strong> {{ invoice.make }}</p>
+    <p><strong>Model:</strong> {{ invoice.model }}</p>
+    <p><strong>Status:</strong> {{ invoice.status }}</p>
+    <p><strong>Total Amount:</strong> Ksh {{ invoice.total_amount }}</p>
+    <p><strong>Due Date:</strong> {{ invoice.due_date }}</p>
+    <p><strong>Services:</strong></p>
+    <ul>
+      <li *ngFor="let service of invoice.services">
+        {{ service.name }} - Ksh {{ service.cost }}
+      </li>
+    </ul>
+    <hr />
+  </li>
+</ul>

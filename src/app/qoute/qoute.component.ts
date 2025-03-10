@@ -1,12 +1,13 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { ApiService } from '../api.service';
-import { NgFor, NgIf } from '@angular/common';
+
+import { CommonModule } from '@angular/common';  
 
 @Component({
   selector: 'app-qoute',
   standalone: true,
-  imports: [NgFor, NgIf],
+  imports: [CommonModule],
   templateUrl: './qoute.component.html',
   styleUrl: './qoute.component.scss'
 })
@@ -16,7 +17,7 @@ export class QuoteComponent implements OnInit {
 
   // Store names instead of IDs
   serviceDetails: { [key: number]: string } = {};
-  vehicleDetails: { [key: number]: string } = {};
+  vehicleDetails: { [key: number]: { make: string; model: string; registration_number: string } } = {};
   windscreenTypes: { [key: number]: string } = {};
   customizations: { [key: number]: string } = {};
 
@@ -28,12 +29,12 @@ export class QuoteComponent implements OnInit {
     this.fetchVehicleDetails();
     this.fetchWindscreenTypes();
     this.fetchCustomizations();
-    console.log('customizations', this.customizations)
   }
 
   fetchQuotes(): void {
     this.apiService.getQuotes().subscribe({
       next: (quotes: any[]) => {
+        console.log('Fetched Quotes:', quotes); // Debugging line
         this.allQuotes = quotes.filter(q => q.status !== 'Rejected');
         this.submittedQuote = this.allQuotes.length > 0 ? this.allQuotes[0] : null;
       },
@@ -58,14 +59,17 @@ export class QuoteComponent implements OnInit {
       next: (vehicles: any[]) => {
         console.log('Fetched vehicles:', vehicles);
         this.vehicleDetails = vehicles.reduce((acc, vehicle) => {
-          acc[vehicle.id] = `${vehicle.name} (${vehicle.registration_number})`; // Store both name & registration
+          acc[vehicle.id] = {
+            make: vehicle.make,
+            model: vehicle.model,
+            registration_number: vehicle.registration_number
+          };
           return acc;
         }, {});
       },
       error: (error: any) => console.error('Error fetching vehicles:', error)
     });
   }
-  
 
   fetchWindscreenTypes(): void {
     this.apiService.getWindscreenTypes().subscribe({
@@ -80,10 +84,9 @@ export class QuoteComponent implements OnInit {
   }
 
   fetchCustomizations(): void {
-    const typeId = 1; // Replace with the appropriate typeId
+    const typeId = 1;
     this.apiService.getWindscreenCustomizations(typeId).subscribe({
       next: (customs: any[]) => {
-        console.log('customizations', this.customizations)
         this.customizations = customs.reduce((acc, custom) => {
           acc[custom.id] = custom.name;
           return acc;
@@ -98,18 +101,11 @@ export class QuoteComponent implements OnInit {
   }
 
   getVehicleName(vehicleId: number | undefined): string {
-    if (!vehicleId || !this.vehicleDetails[vehicleId]) return '';
-  
-    const vehicle = this.vehicleDetails[vehicleId];
-    const parts = vehicle.match(/(.*) \((.*)\)/);
-    
-    if (!parts) return vehicle;
-  
-    const [, name, regNumber] = parts;
-    return `${name} <strong>${regNumber}</strong>`;
-  }
-  
+    if (!vehicleId || !this.vehicleDetails[vehicleId]) return 'Unknown Vehicle';
 
+    const vehicle = this.vehicleDetails[vehicleId];
+    return `${vehicle.make} ${vehicle.model} <strong>(${vehicle.registration_number})</strong>`;
+  }
 
   getWindscreenTypeName(typeId: number): string {
     return this.windscreenTypes[typeId] || `Type ${typeId}`;

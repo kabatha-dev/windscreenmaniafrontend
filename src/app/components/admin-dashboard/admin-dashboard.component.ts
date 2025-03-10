@@ -9,7 +9,7 @@ import { Router } from '@angular/router';
   imports: [NgIf, NgFor],
   standalone: true,
   templateUrl: './admin-dashboard.component.html',
-  styleUrls: ['./admin-dashboard.component.css'] 
+  styleUrls: ['./admin-dashboard.component.scss'] 
 })
 export class AdminDashboardComponent implements OnInit {
   quotes: Quote[] = [];
